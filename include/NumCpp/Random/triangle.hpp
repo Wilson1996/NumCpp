@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,15 +22,16 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Create an array of the given shape and populate it with
 ///	random samples from the "triangle" distribution.
 ///
 #pragma once
 
-#include "NumCpp/Core/Error.hpp"
+#include "NumCpp/Core/Internal/Error.hpp"
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
+#include "NumCpp/Core/Internal/StlAlgorithms.hpp"
 #include "NumCpp/Core/Shape.hpp"
-#include "NumCpp/Core/StlAlgorithms.hpp"
 #include "NumCpp/NdArray.hpp"
 #include "NumCpp/Random/generator.hpp"
 
@@ -45,8 +45,51 @@ namespace nc
     {
         //============================================================================
         // Method Description:
+        ///						Single random value sampled from the "triangle" distribution.
+        ///
+        ///                     NumPy Reference: https://docs.scipy.org/doc/numpy/reference/generated/numpy.random.triangular.html#numpy.random.triangular
+        ///
+        /// @param				inA
+        /// @param				inB
+        /// @param				inC
+        /// @return
+        ///				NdArray
+        ///
+        template<typename dtype>
+        dtype triangle(dtype inA = 0, dtype inB = 0.5, dtype inC = 1)
+        {
+            STATIC_ASSERT_FLOAT(dtype);
+
+            if (inA < 0)
+            {
+                THROW_INVALID_ARGUMENT_ERROR("input A must be greater than or equal to zero.");
+            }
+
+            if (inB < 0)
+            {
+                THROW_INVALID_ARGUMENT_ERROR("input B must be greater than or equal to zero.");
+            }
+
+            if (inC < 0)
+            {
+                THROW_INVALID_ARGUMENT_ERROR("input C must be greater than or equal to zero.");
+            }
+
+            const bool aLessB = inA <= inB;
+            const bool bLessC = inB <= inC;
+            if (!(aLessB && bLessC))
+            {
+                THROW_INVALID_ARGUMENT_ERROR("inputs must be a <= b <= c.");
+            }
+
+            boost::random::triangle_distribution<dtype> dist(inA, inB, inC);
+            return dist(generator_);
+        }
+
+        //============================================================================
+        // Method Description:
         ///						Create an array of the given shape and populate it with
-        ///						random samples from the �triangle� distribution.
+        ///						random samples from the "triangle" distribution.
         ///
         ///                     NumPy Reference: https://docs.scipy.org/doc/numpy/reference/generated/numpy.random.triangular.html#numpy.random.triangular
         ///
@@ -60,6 +103,8 @@ namespace nc
         template<typename dtype>
         NdArray<dtype> triangle(const Shape& inShape, dtype inA = 0, dtype inB = 0.5, dtype inC = 1)
         {
+            STATIC_ASSERT_FLOAT(dtype);
+
             if (inA < 0)
             {
                 THROW_INVALID_ARGUMENT_ERROR("input A must be greater than or equal to zero.");
@@ -87,12 +132,12 @@ namespace nc
             boost::random::triangle_distribution<dtype> dist(inA, inB, inC);
 
             stl_algorithms::for_each(returnArray.begin(), returnArray.end(),
-                [&dist](dtype& value) noexcept -> void
+                [&dist](dtype& value)  -> void
                 {
                     value = dist(generator_);
                 });
 
             return returnArray;
         }
-    }
-}
+    } // namespace random
+}  // namespace nc

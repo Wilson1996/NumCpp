@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,12 +22,13 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Functions for working with NdArrays
 ///
 #pragma once
 
-#include "NumCpp/Core/Error.hpp"
+#include "NumCpp/Core/Internal/Error.hpp"
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
 #include "NumCpp/Core/Shape.hpp"
 #include "NumCpp/Core/Types.hpp"
 #include "NumCpp/NdArray.hpp"
@@ -51,8 +51,10 @@ namespace nc
     ///				NdArray
     ///
     template<typename dtype>
-    NdArray<double> trapz(const NdArray<dtype>& inArray, double dx = 1.0, Axis inAxis = Axis::NONE) noexcept
+    NdArray<double> trapz(const NdArray<dtype>& inArray, double dx = 1.0, Axis inAxis = Axis::NONE) 
     {
+        STATIC_ASSERT_ARITHMETIC(dtype);
+
         const Shape inShape = inArray.shape();
         switch (inAxis)
         {
@@ -105,9 +107,8 @@ namespace nc
             }
             default:
             {
-                // this isn't actually possible, just putting this here to get rid
-                // of the compiler warning.
-                return NdArray<double>(0);
+                THROW_INVALID_ARGUMENT_ERROR("Unimplemented axis type.");
+                return {}; // get rid of compiler warning
             }
         }
     }
@@ -146,7 +147,7 @@ namespace nc
                     double sum = 0;
                     for (uint32 col = 0; col < inShapeY.cols - 1; ++col)
                     {
-                        const double dx = static_cast<double>(inArrayX(row, col + 1) - inArrayX(row, col));
+                        const auto dx = static_cast<double>(inArrayX(row, col + 1) - inArrayX(row, col));
                         sum += dx * (static_cast<double>(inArrayY(row, col + 1) - inArrayY(row, col)) / 2.0 +
                             static_cast<double>(inArrayY(row, col)));
                     }
@@ -167,7 +168,7 @@ namespace nc
                     double sum = 0;
                     for (uint32 col = 0; col < transShape.cols - 1; ++col)
                     {
-                        const double dx = static_cast<double>(arrayXTranspose(row, col + 1) - arrayXTranspose(row, col));
+                        const auto dx = static_cast<double>(arrayXTranspose(row, col + 1) - arrayXTranspose(row, col));
                         sum += dx * (static_cast<double>(arrayYTranspose(row, col + 1) - arrayYTranspose(row, col)) / 2.0 +
                             static_cast<double>(arrayYTranspose(row, col)));
                     }
@@ -182,7 +183,7 @@ namespace nc
                 double sum = 0.0;
                 for (uint32 i = 0; i < inArrayY.size() - 1; ++i)
                 {
-                    const double dx = static_cast<double>(inArrayX[i + 1] - inArrayX[i]);
+                    const auto dx = static_cast<double>(inArrayX[i + 1] - inArrayX[i]);
                     sum += dx * (static_cast<double>(inArrayY[i + 1] - inArrayY[i]) / 2.0 + static_cast<double>(inArrayY[i]));
                 }
 
@@ -191,10 +192,9 @@ namespace nc
             }
             default:
             {
-                // this isn't actually possible, just putting this here to get rid
-                // of the compiler warning.
-                return NdArray<double>(0);
+                THROW_INVALID_ARGUMENT_ERROR("Unimplemented axis type.");
+                return {}; // get rid of compiler warning
             }
         }
     }
-}
+} // namespace nc

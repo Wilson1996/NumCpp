@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,11 +22,12 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Nearest boundary1d
 ///
 #pragma once
 
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
 #include "NumCpp/Core/Slice.hpp"
 #include "NumCpp/NdArray.hpp"
 
@@ -49,6 +49,8 @@ namespace nc
             template<typename dtype>
             NdArray<dtype> nearest1d(const NdArray<dtype>& inImage, uint32 inBoundarySize)
             {
+                STATIC_ASSERT_ARITHMETIC(dtype);
+
                 const uint32 outSize = inImage.size() + inBoundarySize * 2;
 
                 NdArray<dtype> outArray(1, outSize);
@@ -62,6 +64,6 @@ namespace nc
 
                 return outArray;
             }
-        }
-    }
-}
+        }  // namespace boundary
+    }  // namespace filter
+}  // namespace nc

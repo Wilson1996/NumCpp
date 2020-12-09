@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,11 +22,12 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// "standard normal" distrubution
 ///
 #pragma once
 
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
 #include "NumCpp/Core/Shape.hpp"
 #include "NumCpp/NdArray.hpp"
 #include "NumCpp/Random/normal.hpp"
@@ -36,6 +36,24 @@ namespace nc
 {
     namespace random
     {
+        //============================================================================
+        // Method Description:
+        ///						Single random value sampled from the "standard normal" distrubution with
+        ///						mean = 0 and std = 1
+        ///
+        ///                     NumPy Reference: https://docs.scipy.org/doc/numpy/reference/generated/numpy.random.standard_normal.html#numpy.random.standard_normal
+        ///
+        /// @return
+        ///				NdArray
+        ///
+        template<typename dtype>
+        dtype standardNormal()
+        {
+            STATIC_ASSERT_ARITHMETIC(dtype);
+
+            return normal<dtype>(0, 1);
+        }
+
         //============================================================================
         // Method Description:
         ///						Create an array of the given shape and populate it with
@@ -50,9 +68,11 @@ namespace nc
         ///				NdArray
         ///
         template<typename dtype>
-        NdArray<dtype> standardNormal(const Shape& inShape) noexcept
+        NdArray<dtype> standardNormal(const Shape& inShape)
         {
+            STATIC_ASSERT_ARITHMETIC(dtype);
+
             return normal<dtype>(inShape, 0, 1);
         }
-    }
-}
+    }  // namespace random
+}  // namespace nc

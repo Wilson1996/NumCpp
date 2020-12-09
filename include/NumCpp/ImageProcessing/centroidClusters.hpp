@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,12 +22,13 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Center of Mass centroids clusters
 ///
 
 #pragma once
 
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
 #include "NumCpp/ImageProcessing/Centroid.hpp"
 #include "NumCpp/ImageProcessing/Cluster.hpp"
 
@@ -48,16 +48,19 @@ namespace nc
         ///				std::vector<Centroid>
         ///
         template<typename dtype>
-        std::vector<Centroid<dtype> > centroidClusters(const std::vector<Cluster<dtype> >& inClusters) noexcept
+        std::vector<Centroid<dtype> > centroidClusters(const std::vector<Cluster<dtype> >& inClusters) 
         {
-            std::vector<Centroid<dtype> > centroids;
+            STATIC_ASSERT_ARITHMETIC(dtype);
 
+            std::vector<Centroid<dtype>> centroids;
+
+            centroids.reserve(inClusters.size());
             for (auto& cluster : inClusters)
             {
-                centroids.push_back(std::move(Centroid<dtype>(cluster)));
+                centroids.emplace_back(cluster);
             }
 
             return centroids;
         }
-    }
-}
+    }  // namespace imageProcessing
+}  // namespace nc

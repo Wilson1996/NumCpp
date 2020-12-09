@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,13 +22,14 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Special Functions
 ///
 #pragma once
 
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
+#include "NumCpp/Core/Internal/StlAlgorithms.hpp"
 #include "NumCpp/NdArray.hpp"
-#include "NumCpp/Core/StlAlgorithms.hpp"
 
 #include "boost/math/special_functions/gamma.hpp"
 
@@ -44,12 +44,14 @@ namespace nc
         /// @param
         ///				inValue
         /// @return
-        ///				double
+        ///				calculated-result-type
         ///
         template<typename dtype>
-        double gamma1pm1(dtype inValue) noexcept
+        auto gamma1pm1(dtype inValue)
         {
-            return boost::math::tgamma1pm1(static_cast<double>(inValue));
+            STATIC_ASSERT_ARITHMETIC(dtype);
+
+            return boost::math::tgamma1pm1(inValue);
         }
 
         //============================================================================
@@ -59,20 +61,20 @@ namespace nc
         /// @param
         ///				inArray
         /// @return
-        ///				NdArray<double>
+        ///				NdArray
         ///
         template<typename dtype>
-        NdArray<double> gamma1pm1(const NdArray<dtype>& inArray) noexcept
+        auto gamma1pm1(const NdArray<dtype>& inArray)
         {
-            NdArray<double> returnArray(inArray.shape());
+            NdArray<decltype(gamma1pm1(dtype{0}))> returnArray(inArray.shape());
 
             stl_algorithms::transform(inArray.cbegin(), inArray.cend(), returnArray.begin(),
-                [](dtype inValue) -> double
+                [](dtype inValue) -> auto
                 { 
                     return gamma1pm1(inValue);
                 });
 
             return returnArray;
         }
-    }
-}
+    } // namespace special
+}  // namespace nc

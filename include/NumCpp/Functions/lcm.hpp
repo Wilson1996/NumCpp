@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,12 +22,13 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Functions for working with NdArrays
 ///
 #pragma once
 
-#include "NumCpp/Core/Error.hpp"
+#include "NumCpp/Core/Internal/Error.hpp"
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
 #include "NumCpp/NdArray.hpp"
 
 #include "boost/integer/common_factor_rt.hpp"
@@ -47,9 +47,10 @@ namespace nc
     ///				dtype
     ///
     template<typename dtype>
-    dtype lcm(dtype inValue1, dtype inValue2) noexcept
+    dtype lcm(dtype inValue1, dtype inValue2) noexcept 
     {
         STATIC_ASSERT_INTEGER(dtype);
+
         return boost::integer::lcm(inValue1, inValue2);
     }
 
@@ -64,9 +65,10 @@ namespace nc
     ///				NdArray<double>
     ///
     template<typename dtype>
-    dtype lcm(const NdArray<dtype>& inArray) noexcept
+    dtype lcm(const NdArray<dtype>& inArray)
     {
         STATIC_ASSERT_INTEGER(dtype);
+
         return boost::integer::lcm_range(inArray.cbegin(), inArray.cend()).first;
     }
-}
+}  // namespace nc

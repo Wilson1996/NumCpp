@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,13 +22,13 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Special Functions
 ///
 #pragma once
 
-#include "NumCpp/NdArray.hpp"
 #include "NumCpp/Core/Types.hpp"
+#include "NumCpp/NdArray.hpp"
 #include "NumCpp/Special/factorial.hpp"
 
 #include "boost/math/special_functions/factorials.hpp"
@@ -47,13 +46,13 @@ namespace nc
         /// @return
         ///				double
         ///
-        inline double pnr(uint32 n, uint32 r) noexcept
+        inline double pnr(uint32 n, uint32 r)
         {
             if (r > n)
             {
                 return 0.0;
             }
-            else if (r == n)
+            if (r == n)
             {
                 return factorial(n);
             }
@@ -62,14 +61,14 @@ namespace nc
 
             if (n <= boost::math::max_factorial<double>::value)
             {
-                double nFactorial = factorial(n);
-                double nMinusRFactoral = factorial(n - r);
+                const double nFactorial = factorial(n);
+                const double nMinusRFactoral = factorial(n - r);
 
                 combinations = nFactorial / nMinusRFactoral;
             }
             else
             {
-                uint32 lower = n - r + 1;
+                const uint32 lower = n - r + 1;
 
                 combinations = static_cast<double>(lower);
                 for (uint32 i = lower + 1; i < n; ++i)
@@ -80,5 +79,5 @@ namespace nc
 
             return combinations;
         }
-    }
-}
+    }  // namespace special
+} // namespace nc

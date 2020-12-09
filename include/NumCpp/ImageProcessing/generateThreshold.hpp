@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,15 +22,16 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Generates a threshold
 ///
 
 #pragma once
 
-#include "NumCpp/Core/Error.hpp"
-#include "NumCpp/Core/Types.hpp"
 #include "NumCpp/Core/DtypeInfo.hpp"
+#include "NumCpp/Core/Internal/Error.hpp"
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
+#include "NumCpp/Core/Types.hpp"
 #include "NumCpp/NdArray.hpp"
 #include "NumCpp/Utils/essentiallyEqual.hpp"
 
@@ -56,45 +56,46 @@ namespace nc
         template<typename dtype>
         dtype generateThreshold(const NdArray<dtype>& inImageArray, double inRate)
         {
+            STATIC_ASSERT_ARITHMETIC(dtype);
+
             if (inRate < 0.0 || inRate > 1.0)
             {
                 THROW_INVALID_ARGUMENT_ERROR("input rate must be of the range [0, 1]");
             }
 
             // first build a histogram
-            int32 minValue = static_cast<int32>(std::floor(inImageArray.min().item()));
-            int32 maxValue = static_cast<int32>(std::floor(inImageArray.max().item()));
+            auto minValue = static_cast<int32>(std::floor(inImageArray.min().item()));
+            auto maxValue = static_cast<int32>(std::floor(inImageArray.max().item()));
 
             if (utils::essentiallyEqual(inRate, 0.0))
             {
                 return static_cast<dtype>(maxValue);
             }
-            else if (utils::essentiallyEqual(inRate, 1.0))
+
+            if (utils::essentiallyEqual(inRate, 1.0))
             {
                 if (DtypeInfo<dtype>::isSigned())
                 {
                     return static_cast<dtype>(minValue - 1);
                 }
-                else
-                {
-                    return dtype{ 0 };
-                }
+
+                return dtype{ 0 };
             }
 
-            const uint32 histSize = static_cast<uint32>(maxValue - minValue + 1);
+            const auto histSize = static_cast<uint32>(maxValue - minValue + 1);
 
             NdArray<double> histogram(1, histSize);
             histogram.zeros();
             for (auto intensity : inImageArray)
             {
-                const uint32 bin = static_cast<uint32>(static_cast<int32>(std::floor(intensity)) - minValue);
+                const auto bin = static_cast<uint32>(static_cast<int32>(std::floor(intensity)) - minValue);
                 ++histogram[bin];
             }
 
             // integrate the normalized histogram from right to left to make a survival function (1 - CDF)
-            const double dNumPixels = static_cast<double>(inImageArray.size());
+            const auto dNumPixels = static_cast<double>(inImageArray.size());
             NdArray<double> survivalFunction(1, histSize + 1);
-            survivalFunction[-1] = 0;
+            survivalFunction[-1] = 0.0;
             for (int32 i = histSize - 1; i > -1; --i)
             {
                 double histValue = histogram[i] / dNumPixels;
@@ -106,7 +107,7 @@ namespace nc
             uint32 indexHigh = histSize - 1;
             uint32 index = indexHigh / 2; // integer division
 
-            const bool keepGoing = true;
+            constexpr bool keepGoing = true;
             while (keepGoing)
             {
                 const double value = survivalFunction[index];
@@ -125,10 +126,8 @@ namespace nc
                     {
                         return static_cast<dtype>(thresh);
                     }
-                    else
-                    {
-                        return thresh < 0 ? 0 : static_cast<dtype>(thresh);
-                    }
+
+                    return thresh < 0 ? 0 : static_cast<dtype>(thresh);
                 }
 
                 if (indexHigh - indexLow < 2)
@@ -143,5 +142,5 @@ namespace nc
             return static_cast<dtype>(histSize - 1);
         }
 
-    }
-}
+    } // namespace imageProcessing
+} // namespace nc

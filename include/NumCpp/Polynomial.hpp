@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,16 +22,16 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Simple Vector classes
 ///
 #pragma once
 
+#include "NumCpp/Polynomial/Poly1d.hpp"
 #include "NumCpp/Polynomial/chebyshev_t.hpp"
 #include "NumCpp/Polynomial/chebyshev_u.hpp"
 #include "NumCpp/Polynomial/hermite.hpp"
 #include "NumCpp/Polynomial/laguerre.hpp"
 #include "NumCpp/Polynomial/legendre_p.hpp"
 #include "NumCpp/Polynomial/legendre_q.hpp"
-#include "NumCpp/Polynomial/Poly1d.hpp"
 #include "NumCpp/Polynomial/spherical_harmonic.hpp"

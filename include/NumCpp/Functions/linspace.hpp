@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,12 +22,13 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Functions for working with NdArrays
 ///
 #pragma once
 
-#include "NumCpp/Core/Error.hpp"
+#include "NumCpp/Core/Internal/Error.hpp"
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
 #include "NumCpp/NdArray.hpp"
 
 
@@ -61,11 +61,14 @@ namespace nc
     template<typename dtype>
     NdArray<dtype> linspace(dtype inStart, dtype inStop, uint32 inNum = 50, bool endPoint = true)
     {
+        STATIC_ASSERT_ARITHMETIC(dtype);
+
         if (inNum == 0)
         {
             return NdArray<dtype>(0);
         }
-        else if (inNum == 1)
+
+        if (inNum == 1)
         {
             NdArray<dtype> returnArray = { inStart };
             return returnArray;
@@ -83,42 +86,38 @@ namespace nc
                 NdArray<dtype> returnArray = { inStart, inStop };
                 return returnArray;
             }
-            else
+            
+            NdArray<dtype> returnArray(1, inNum);
+            returnArray.front() = inStart;
+            returnArray.back() = inStop;
+
+            dtype step = (inStop - inStart) / static_cast<dtype>(inNum - 1);
+
+            for (uint32 i = 1; i < inNum - 1; ++i)
             {
-                NdArray<dtype> returnArray(1, inNum);
-                returnArray[0] = inStart;
-                returnArray[inNum - 1] = inStop;
-
-                dtype step = (inStop - inStart) / (inNum - 1);
-                for (uint32 i = 1; i < inNum - 1; ++i)
-                {
-                    returnArray[i] = returnArray[i - 1] + step;
-                }
-
-                return returnArray;
+                returnArray[i] = inStart + static_cast<dtype>(i) * step;
             }
+
+            return returnArray;
         }
-        else
+        
+        if (inNum == 2)
         {
-            if (inNum == 2)
-            {
-                dtype step = (inStop - inStart) / (inNum);
-                NdArray<dtype> returnArray = { inStart, inStart + step };
-                return returnArray;
-            }
-            else
-            {
-                NdArray<dtype> returnArray(1, inNum);
-                returnArray[0] = inStart;
-
-                dtype step = (inStop - inStart) / inNum;
-                for (uint32 i = 1; i < inNum; ++i)
-                {
-                    returnArray[i] = returnArray[i - 1] + step;
-                }
-
-                return returnArray;
-            }
+            dtype step = (inStop - inStart) / (inNum);
+            NdArray<dtype> returnArray = { inStart, inStart + step };
+            return returnArray;
         }
+        
+        NdArray<dtype> returnArray(1, inNum);
+        returnArray.front() = inStart;
+
+        dtype step = (inStop - inStart) / static_cast<dtype>(inNum);
+
+        for (uint32 i = 1; i < inNum; ++i)
+        {
+            returnArray[i] = inStart + static_cast<dtype>(i) * step;
+        }
+
+        return returnArray;
     }
-}
+}  // namespace nc

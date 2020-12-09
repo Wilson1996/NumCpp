@@ -3,8 +3,8 @@
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
 /// @version 1.1
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,7 +23,7 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Modify a sequence in-place by shuffling its contents.
 ///
 #pragma once
@@ -45,9 +45,9 @@ namespace nc
         ///				inArray
         ///
         template<typename dtype>
-        void shuffle(NdArray<dtype>& inArray) noexcept
+        void shuffle(NdArray<dtype>& inArray) 
         {
             std::shuffle(inArray.begin(), inArray.end(), generator_);
         }
-    }
-}
+    }  // namespace random
+}  // namespace nc

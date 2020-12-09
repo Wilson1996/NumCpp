@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,7 +22,7 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Degree seperation between the two Coordinates
 ///
 #pragma once
@@ -43,7 +42,7 @@ namespace nc
         ///
         /// @return             degrees
         ///
-        inline double degreeSeperation(const Coordinate& inCoordinate1, const Coordinate& inCoordinate2) noexcept
+        inline double degreeSeperation(const Coordinate& inCoordinate1, const Coordinate& inCoordinate2) 
         {
             return inCoordinate1.degreeSeperation(inCoordinate2);
         }
@@ -57,10 +56,10 @@ namespace nc
         ///
         /// @return             degrees
         ///
-        inline double degreeSeperation(const NdArray<double>& inVector1, const NdArray<double>& inVector2) noexcept
+        inline double degreeSeperation(const NdArray<double>& inVector1, const NdArray<double>& inVector2)
         {
-            Coordinate inCoord1(inVector1);
+            const Coordinate inCoord1(inVector1);
             return inCoord1.degreeSeperation(inVector2);
         }
-    }
-}
+    }  // namespace coordinates
+} // namespace nc

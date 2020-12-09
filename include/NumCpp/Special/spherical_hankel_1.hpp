@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,14 +22,18 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Special Functions
 ///
 #pragma once
 
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
+#include "NumCpp/NdArray.hpp"
+
 #include "boost/math/special_functions/hankel.hpp"
 
 #include <complex>
+#include <type_traits>
 
 namespace nc
 {
@@ -43,12 +46,38 @@ namespace nc
         /// @param      inV: the order of the bessel function
         /// @param      inX: the input value
         /// @return
-        ///				double
+        ///				calculated-result-type 
         ///
         template<typename dtype1, typename dtype2>
-        std::complex<double> spherical_hankel_1(dtype1 inV, dtype2 inX) noexcept
+        auto spherical_hankel_1(dtype1 inV, dtype2 inX)
         {
-            return boost::math::sph_hankel_1(static_cast<double>(inV), static_cast<double>(inX));
+            STATIC_ASSERT_ARITHMETIC(dtype1);
+            STATIC_ASSERT_ARITHMETIC(dtype2);
+
+            return boost::math::sph_hankel_1(inV, inX);
         }
-    }
-}
+
+        //============================================================================
+        // Method Description:
+        /// Spherical Hankel funcion of the first kind
+        ///
+        /// @param      inV: the order of the bessel function
+        /// @param      inArray: the input values
+        /// @return
+        ///				NdArray
+        ///
+        template<typename dtype1, typename dtype2>
+        auto spherical_hankel_1(dtype1 inV, const NdArray<dtype2>& inArray) 
+        {
+            NdArray<decltype(spherical_hankel_1(dtype1{0}, dtype2{0}))> returnArray(inArray.shape());
+
+            stl_algorithms::transform(inArray.cbegin(), inArray.cend(), returnArray.begin(),
+                [inV](dtype2 inValue) -> auto
+                { 
+                    return spherical_hankel_1(inV, inValue); 
+                });
+
+            return returnArray;
+        }
+    }  // namespace special
+} // namespace nc

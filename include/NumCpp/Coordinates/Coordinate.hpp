@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,14 +22,14 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Coordinate Object
 ///
 #pragma once
 
 #include "NumCpp/Coordinates/Dec.hpp"
 #include "NumCpp/Coordinates/RA.hpp"
-#include "NumCpp/Core/Error.hpp"
+#include "NumCpp/Core/Internal/Error.hpp"
 #include "NumCpp/Core/Types.hpp"
 #include "NumCpp/Functions/deg2rad.hpp"
 #include "NumCpp/Functions/dot.hpp"
@@ -50,49 +49,11 @@ namespace nc
         ///						Holds a full coordinate object
         class Coordinate
         {
-        private:
-            //====================================Attributes==============================
-            RA      ra_{};
-            Dec     dec_{};
-            double  x_{ 1.0 };
-            double  y_{ 0.0 };
-            double  z_{ 0.0 };
-
-            //============================================================================
-            ///						Converts polar coordinates to cartesian coordinates
-            ///
-            void cartesianToPolar()
-            {
-                double degreesRa = rad2deg(std::atan2(y_, x_));
-                if (degreesRa < 0)
-                {
-                    degreesRa += 360;
-                }
-                ra_ = RA(degreesRa);
-
-                const double r = std::sqrt(utils::sqr(x_) + utils::sqr(y_) + utils::sqr(z_));
-                double degreesDec = rad2deg(std::asin(z_ / r));
-                dec_ = Dec(degreesDec);
-            }
-
-            //============================================================================
-            ///						Converts polar coordinates to cartesian coordinates
-            ///
-            void polarToCartesian() noexcept
-            {
-                const double raRadians = deg2rad(ra_.degrees());
-                const double decRadians = deg2rad(dec_.degrees());
-
-                x_ = std::cos(raRadians) * std::cos(decRadians);
-                y_ = std::sin(raRadians) * std::cos(decRadians);
-                z_ = std::sin(decRadians);
-            }
-
         public:
             //============================================================================
-            ///						Default Constructor, not super usefull on its own
+            ///						Default Constructor
             ///
-            Coordinate() noexcept = default;
+            Coordinate() = default;
 
             //============================================================================
             ///						Constructor
@@ -119,7 +80,7 @@ namespace nc
             /// @param              inDecSeconds
             ///
             Coordinate(uint8 inRaHours, uint8 inRaMinutes, double inRaSeconds, Sign inSign,
-                uint8 inDecDegreesWhole, uint8 inDecMinutes, double inDecSeconds)  noexcept :
+                uint8 inDecDegreesWhole, uint8 inDecMinutes, double inDecSeconds)   :
                 ra_(inRaHours, inRaMinutes, inRaSeconds),
                 dec_(inSign, inDecDegreesWhole, inDecMinutes, inDecSeconds)
             {
@@ -146,7 +107,7 @@ namespace nc
             /// @param              inY
             /// @param              inZ
             ///
-            Coordinate(double inX, double inY, double inZ) :
+            Coordinate(double inX, double inY, double inZ) noexcept :
                 x_(inX),
                 y_(inY),
                 z_(inZ)
@@ -159,7 +120,7 @@ namespace nc
             ///
             /// @param				inCartesianVector
             ///
-            Coordinate(const NdArray<double> inCartesianVector)
+            Coordinate(const NdArray<double>& inCartesianVector)
             {
                 if (inCartesianVector.size() != 3)
                 {
@@ -178,7 +139,7 @@ namespace nc
             ///
             /// @return             Dec
             ///
-            const Dec& dec() const noexcept
+            const Dec& dec() const noexcept 
             {
                 return dec_;
             }
@@ -188,7 +149,7 @@ namespace nc
             ///
             /// @return     RA
             ///
-            const RA& ra() const noexcept
+            const RA& ra() const noexcept 
             {
                 return ra_;
             }
@@ -198,7 +159,7 @@ namespace nc
             ///
             /// @return     x
             ///
-            double x() const noexcept
+            double x() const noexcept 
             {
                 return x_;
             }
@@ -208,7 +169,7 @@ namespace nc
             ///
             /// @return     y
             ///
-            double y() const noexcept
+            double y() const noexcept 
             {
                 return y_;
             }
@@ -218,7 +179,7 @@ namespace nc
             ///
             /// @return     z
             ///
-            double z() const noexcept
+            double z() const noexcept 
             {
                 return z_;
             }
@@ -228,7 +189,7 @@ namespace nc
             ///
             /// @return     NdArray
             ///
-            NdArray<double> xyz() const
+            NdArray<double> xyz() const 
             {
                 NdArray<double> out = { x_, y_, z_ };
                 return out;
@@ -241,7 +202,7 @@ namespace nc
             ///
             /// @return     degrees
             ///
-            double degreeSeperation(const Coordinate& inOtherCoordinate) const
+            double degreeSeperation(const Coordinate& inOtherCoordinate) const 
             {
                 return rad2deg(radianSeperation(inOtherCoordinate));
             }
@@ -266,7 +227,7 @@ namespace nc
             ///
             /// @return     radians
             ///
-            double radianSeperation(const Coordinate& inOtherCoordinate) const
+            double radianSeperation(const Coordinate& inOtherCoordinate) const 
             {
                 return std::acos(dot(xyz(), inOtherCoordinate.xyz()).item());
             }
@@ -348,6 +309,44 @@ namespace nc
                 inStream << inCoord.str();
                 return inStream;
             }
+
+        private:
+            //====================================Attributes==============================
+            RA      ra_{};
+            Dec     dec_{};
+            double  x_{ 1.0 };
+            double  y_{ 0.0 };
+            double  z_{ 0.0 };
+
+            //============================================================================
+            ///						Converts polar coordinates to cartesian coordinates
+            ///
+            void cartesianToPolar() noexcept
+            {
+                double degreesRa = rad2deg(std::atan2(y_, x_));
+                if (degreesRa < 0)
+                {
+                    degreesRa += 360;
+                }
+                ra_ = RA(degreesRa);
+
+                const double r = std::sqrt(utils::sqr(x_) + utils::sqr(y_) + utils::sqr(z_));
+                const double degreesDec = rad2deg(std::asin(z_ / r));
+                dec_ = Dec(degreesDec);
+            }
+
+            //============================================================================
+            ///						Converts polar coordinates to cartesian coordinates
+            ///
+            void polarToCartesian() noexcept
+            {
+                const double raRadians = deg2rad(ra_.degrees());
+                const double decRadians = deg2rad(dec_.degrees());
+
+                x_ = std::cos(raRadians) * std::cos(decRadians);
+                y_ = std::sin(raRadians) * std::cos(decRadians);
+                z_ = std::sin(decRadians);
+            }
         };
-    }
-}
+    } // namespace coordinates
+} // namespace nc

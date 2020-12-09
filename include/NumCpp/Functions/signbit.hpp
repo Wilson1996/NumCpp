@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,13 +22,14 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Functions for working with NdArrays
 ///
 #pragma once
 
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
+#include "NumCpp/Core/Internal/StlAlgorithms.hpp"
 #include "NumCpp/NdArray.hpp"
-#include "NumCpp/Core/StlAlgorithms.hpp"
 
 namespace nc
 {
@@ -45,9 +45,11 @@ namespace nc
     ///				NdArray
     ///
     template<typename dtype>
-    bool signbit(dtype inValue) noexcept
+    bool signbit(dtype inValue) noexcept 
     {
-        return inValue < 0 ? true : false;
+        STATIC_ASSERT_ARITHMETIC(dtype);
+
+        return inValue < dtype{ 0 } ? true : false;
     }
 
     //============================================================================
@@ -62,7 +64,7 @@ namespace nc
     ///				NdArray
     ///
     template<typename dtype>
-    NdArray<bool> signbit(const NdArray<dtype>& inArray) noexcept
+    NdArray<bool> signbit(const NdArray<dtype>& inArray) 
     {
         NdArray<bool> returnArray(inArray.shape());
         stl_algorithms::transform(inArray.cbegin(), inArray.cend(), returnArray.begin(),
@@ -73,4 +75,4 @@ namespace nc
 
         return returnArray;
     }
-}
+} // namespace nc

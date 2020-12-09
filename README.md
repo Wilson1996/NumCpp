@@ -1,12 +1,23 @@
-﻿# NumCpp: A Templatized Header Only C++ Implementation of the [Python NumPy Library](http://www.numpy.org)
+﻿![NumCpp logo](https://github.com/dpilger26/NumCpp/raw/master/docs/logo/NumCppLogo.png)
+
+<!-- [![GitHub watchers](https://img.shields.io/github/watchers/dpilger26/NumCpp.svg?style=social&label=Watch&maxAge=2592000)](https://GitHub.com/dpilger26/NumCpp/watchers/)
+[![GitHub stars](https://img.shields.io/github/stars/dpilger26/NumCpp.svg?style=social&label=Star&maxAge=2592000)](https://GitHub.com/dpilger26/NumCpp/stargazers/)
+[![GitHub forks](https://img.shields.io/github/forks/dpilger26/NumCpp.svg?style=social&label=Fork&maxAge=2592000)](https://GitHub.com/dpilger26/NumCpp/network/)   -->
+
+[![C++14](https://img.shields.io/badge/C%2B%2B-14-blue.svg)](https://isocpp.org/std/the-standard)
+[![Build status](https://ci.appveyor.com/api/projects/status/slxre2j64qc8ubvl/branch/master?svg=true)](https://ci.appveyor.com/project/dpilger26/numcpp/branch/master)
+[![Build Status](https://travis-ci.org/dpilger26/NumCpp.svg?branch=master)](https://travis-ci.org/dpilger26/NumCpp)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ea24c08d892e4beebd46cfca260823c1)](https://app.codacy.com/manual/dpilger26/NumCpp?utm_source=github.com&utm_medium=referral&utm_content=dpilger26/NumCpp&utm_campaign=Badge_Grade_Dashboard)
+
+# NumCpp: A Templatized Header Only C++ Implementation of the [Python NumPy Library](http://www.numpy.org)
 
 ## Author: David Pilger dpilger26@gmail.com
 
-## Version: 1.2
+## Version: ![GitHub tag (latest by date)](https://img.shields.io/github/tag-date/dpilger26/NumCpp.svg?color=blue&label=Official%20Release&style=popout)
 
-## License
+## License [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 
-Copyright 2019 David Pilger
+Copyright 2020 David Pilger
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this
 software and associated documentation files(the "Software"), to deal in the Software
@@ -23,15 +34,64 @@ INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PA
 
 ## Testing
 
-**C++ Standards:** C++11, C++14, and C++17  
-**Compilers:** VS 2017/2019, GCC 7.4.0/8.3/9.1, and Clang 6.0/8.0
-**Boost Versions:** 1.68 and 1.70  
+**C++ Standards:**  
+C++14  
+C++17  
+C++2a  
+
+**Compilers:**  
+Visual Studio: 2017, 2019  
+GNU: 6.5, 7.5, 8.4, 9.3, 10.1  
+Clang: 6, 7, 8, 9, 10  
+
+**Boost Versions:**  
+1.68, 1.70, 1.72, and 1.73  
 
 ## [Documentation](https://dpilger26.github.io/NumCpp)
 
 ## [GitHub](https://github.com/dpilger26/NumCpp)
 
-## [Installation](https://dpilger26.github.io/NumCpp/doxygen/html/md__c_1__users_pilgeda__documents__git_hub__num_cpp_install__r_e_a_d_m_e.html)
+## [Installation](https://dpilger26.github.io/NumCpp/doxygen/html/md__c_1__github__num_cpp_docs_markdown__installation.html)
+
+## [Building](https://dpilger26.github.io/NumCpp/doxygen/html/md__c_1__github__num_cpp_docs_markdown__building.html)
+
+## Release Notes
+
+### Version 2.3.0
+
+* Added slicing to DataCube class  
+
+### Version 2.2.0
+
+* Added additional where() overloads to match NumPy functionality  
+
+### Version 2.1.0
+
+* Improved installation and usage with CMake find_package support
+* Various minor improvements
+
+### Version 2.0.0
+
+* Dropped support of C++11, now requires a C++14 or higher compiler
+* Added support for `std::complex<T>`, closing __Issue #58__
+* Added more `NdArray` constructors for STL containers including `std::vector<std::vector<T>>`, closing __Issue #59__
+* Added `polyfit` routine inline with Numpy `polyfit`, closing __Issue #61__
+* Added ability to use `NdArray` as container for generic structs
+* Non-linear least squares fitting using Gauss-Newton
+* Root finding routines
+* Numerical integration routines
+* `lu_decomposition` and `pivotLU_decomposition` added to `Linalg` namespace
+* New STL iterators added to `NdArray`
+  * `iterator`
+  * `const_iterator`
+  * `reverse_iterator`
+  * `const_reverse_iterator`
+  * `column_iterator`
+  * `const_column_iterator`
+  * `reverse_column_iterator`
+  * `const_reverse_column_iterator`
+* Added `rodriguesRotation` and `wahbasProblem` to `Rotations` namespace
+* Various efficiency and/or bug fixes
 
 ## From NumPy To NumCpp – A Quick Start Guide
 
@@ -41,7 +101,7 @@ in the **NumCpp** library please visit the [Full Documentation](https://dpilger2
 
 ### CONTAINERS
 
-The main data structure in **NumpCpp** is the `NdArray`.  It is inherently a 2D array class, with 1D arrays being implemented as 1xN arrays.  There is also a `DataCube` class that is provided as a convenience container for storing an array of 2D `NdArray`s, but it has limited usefulness past a simple container.
+The main data structure in **NumCpp** is the `NdArray`.  It is inherently a 2D array class, with 1D arrays being implemented as 1xN arrays.  There is also a `DataCube` class that is provided as a convenience container for storing an array of 2D `NdArray`s, but it has limited usefulness past a simple container.
 
 | **NumPy**                                                | **NumCpp**                                               |
 |:--------------------------------------------------------:|:--------------------------------------------------------:|
@@ -69,7 +129,7 @@ Many initializer functions are provided that return `NdArray`s for common needs.
 
 ### SLICING/BROADCASTING
 
-**NumpCpp** offers **NumPy** style slicing and broadcasting.
+**NumCpp** offers **NumPy** style slicing and broadcasting.
 
 | **NumPy**                                                | **NumCpp**                                               |
 |:--------------------------------------------------------:|:--------------------------------------------------------:|
@@ -121,7 +181,7 @@ The following return new `NdArray`s.
 
 ### ITERATION
 
-**NumpCpp** follows the idioms of the C++ STL providing iterator pairs to iterate on arrays in different fashions.
+**NumCpp** follows the idioms of the C++ STL providing iterator pairs to iterate on arrays in different fashions.
 
 | **NumPy**                                                | **NumCpp**                                               |
 |:--------------------------------------------------------:|:--------------------------------------------------------:|
@@ -130,7 +190,7 @@ The following return new `NdArray`s.
 
 ### LOGICAL
 
-Logical FUNCTIONS in **NumpCpp** behave the same as **NumPy**.
+Logical FUNCTIONS in **NumCpp** behave the same as **NumPy**.
 
 | **NumPy**                                                | **NumCpp**                                               |
 |:--------------------------------------------------------:|:--------------------------------------------------------:|
@@ -183,7 +243,7 @@ Reducers accumulate values of `NdArray`s along specified axes. When no axis is s
 
 ### I/O
 
-Print and file output methods.  All **NumpCpp** classes support a `print()` method and `<<` stream operators.
+Print and file output methods.  All **NumCpp** classes support a `print()` method and `<<` stream operators.
 
 | **NumPy**                                                | **NumCpp**                                               |
 |:--------------------------------------------------------:|:--------------------------------------------------------:|
@@ -196,7 +256,7 @@ Print and file output methods.  All **NumpCpp** classes support a `print()` meth
 
 ### MATHEMATICAL FUNCTIONS
 
-**NumpCpp** universal functions are provided for a large set number of mathematical functions.
+**NumCpp** universal functions are provided for a large set number of mathematical functions.
 
 #### BASIC FUNCTIONS
 

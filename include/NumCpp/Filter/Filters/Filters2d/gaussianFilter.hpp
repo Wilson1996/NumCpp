@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,12 +22,12 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Calculates a multidimensional gaussian filter.
 ///
 #pragma once
 
-#include "NumCpp/Core/Error.hpp"
+#include "NumCpp/Core/Internal/Error.hpp"
 #include "NumCpp/Core/Types.hpp"
 #include "NumCpp/Filter/Filters/Filters2d/convolve.hpp"
 #include "NumCpp/NdArray.hpp"
@@ -65,14 +64,14 @@ namespace nc
             }
 
             // calculate the kernel size based off of the input sigma value
-            const uint32 MIN_KERNEL_SIZE = 5;
+            constexpr uint32 MIN_KERNEL_SIZE = 5;
             uint32 kernelSize = std::max(static_cast<uint32>(std::ceil(inSigma * 2.0 * 4.0)), MIN_KERNEL_SIZE); // 4 standard deviations
             if (kernelSize % 2 == 0)
             {
                 ++kernelSize; // make sure the kernel is an odd size
             }
 
-            const double kernalHalfSize = static_cast<double>(kernelSize / 2); // integer division
+            const auto kernalHalfSize = static_cast<double>(kernelSize / 2); // integer division
 
             // calculate the gaussian kernel
             NdArray<double> kernel(kernelSize);
@@ -97,5 +96,5 @@ namespace nc
 
             return output;
         }
-    }
-}
+    } // namespace filter
+} // namespace nc

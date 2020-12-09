@@ -1,18 +1,17 @@
 /*
-@ @licstart  The following is the entire license notice for the
+@licstart  The following is the entire license notice for the
 JavaScript code in this file.
 
-Copyright (C) 1997-2017 by Dimitri van Heesch
+Copyright (C) 1997-2019 by Dimitri van Heesch
 
 This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+it under the terms of version 2 of the GNU General Public License as published by
+the Free Software Foundation
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
@@ -24,8 +23,8 @@ for the JavaScript code in this file
 var NAVTREE =
 [
   [ "NumCpp", "index.html", [
-    [ "NumCpp: A Templatized Header Only C++ Implementation of the <a href=\"http://www.numpy.org\">Python NumPy Library</a>", "index.html", null ],
-    [ "Installation", "md__c_1__git_hub__num_cpp_install__r_e_a_d_m_e.html", null ],
+    [ "Installation", "md__c_1__github__num_cpp_docs_markdown__installation.html", null ],
+    [ "Building", "md__c_1__github__num_cpp_docs_markdown__building.html", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [
@@ -39,6 +38,7 @@ var NAVTREE =
     [ "Data Structures", "annotated.html", [
       [ "Data Structures", "annotated.html", "annotated_dup" ],
       [ "Data Structure Index", "classes.html", null ],
+      [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Data Fields", "functions.html", [
         [ "All", "functions.html", "functions_dup" ],
         [ "Functions", "functions_func.html", "functions_func" ],
@@ -61,15 +61,17 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"_boost_interface_8hpp.html",
-"abs_8hpp.html#ae8445c38053ae358e2588b45a8b0ba9b",
-"classnc_1_1_dtype_info.html#a039ecfb9a5bd9fe0cb751a59f28055d1",
-"classnc_1_1_vec2.html#a271ca2cae96a1df44486fbcc2c0f890f",
-"classnc_1_1rotations_1_1_quaternion.html#a60f1f33144c887cde1338fd80183638f",
-"fmin_8hpp.html",
-"lstsq_8hpp_source.html",
-"permutation_8hpp.html#ae0b8066f06a5f5b5a0baee76c5030892",
-"tri_8hpp.html#a9464c274ad7737a74f70afe33a5b2f72"
+"_bisection_8hpp.html",
+"_pybind_interface_8hpp_source.html",
+"arange_8hpp.html#a724165d620d8bff96f8f004c18257ad6",
+"classnc_1_1_nd_array.html#a094424d8f368eaa3730102a5f75f0c2e",
+"classnc_1_1_nd_array_const_iterator.html#a171276f9e90a1336d156c61c2b61bd23",
+"classnc_1_1image_processing_1_1_cluster.html#a8c884e5e55d41c09165bca85446edb1f",
+"cos_8hpp_source.html",
+"functions_func_v.html",
+"meshgrid_8hpp.html#ae392e03f9e01b088a082c6055082df49",
+"polar_8hpp.html#abbf3200fe11e4cb7ae6363b00099c2fe",
+"subtract_8hpp.html#ae4be1086253a0b121695d9cabfcb86ce"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,14 +22,15 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Holds the information for a cluster of pixels
 ///
 
 #pragma once
 
-#include "NumCpp/Core/Error.hpp"
-#include "NumCpp/Core/StlAlgorithms.hpp"
+#include "NumCpp/Core/Internal/Error.hpp"
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
+#include "NumCpp/Core/Internal/StlAlgorithms.hpp"
 #include "NumCpp/Core/Types.hpp"
 #include "NumCpp/ImageProcessing/Pixel.hpp"
 #include "NumCpp/Utils/num2str.hpp"
@@ -52,31 +52,18 @@ namespace nc
         template<typename dtype>
         class Cluster
         {
+        private:
+            STATIC_ASSERT_ARITHMETIC(dtype);
+
         public:
             //================================Typedefs===============================
-            typedef typename std::vector<Pixel<dtype> >::const_iterator    const_iterator;
+            using const_iterator = typename std::vector<Pixel<dtype> >::const_iterator;
 
-        private:
-            //================================Attributes===============================
-            int32                       clusterId_{ -1 };
-            std::vector<Pixel<dtype> >  pixels_{};
-
-            uint32                      rowMin_{ std::numeric_limits<uint32>::max() }; // largest possible number
-            uint32                      rowMax_{ 0 };
-            uint32                      colMin_{ std::numeric_limits<uint32>::max() }; // largest possible number
-            uint32                      colMax_{ 0 };
-
-            dtype                       intensity_{ 0 };
-            dtype                       peakPixelIntensity_{ 0 };
-
-            double                      eod_{ 1.0 };
-
-        public:
             //=============================================================================
             // Description:
             ///              default constructor needed by containers
             ///
-            Cluster() noexcept = default;
+            Cluster() = default;
 
             //=============================================================================
             // Description:
@@ -85,7 +72,7 @@ namespace nc
             /// @param
             ///              inClusterId
             ///
-            Cluster(uint32 inClusterId) noexcept :
+            explicit Cluster(uint32 inClusterId) noexcept :
                 clusterId_(inClusterId)
             {}
 
@@ -99,7 +86,7 @@ namespace nc
             /// @return
             ///              bool
             ///
-            bool operator==(const Cluster<dtype>& rhs) const
+            bool operator==(const Cluster<dtype>& rhs) const noexcept
             {
                 if (pixels_.size() != rhs.pixels_.size())
                 {
@@ -119,7 +106,7 @@ namespace nc
             /// @return
             ///              bool
             ///
-            bool operator!=(const Cluster<dtype>& rhs) const
+            bool operator!=(const Cluster<dtype>& rhs) const noexcept
             {
                 return !(*this == rhs);
             }
@@ -134,7 +121,7 @@ namespace nc
             /// @return
             ///              Pixel
             ///
-            const Pixel<dtype>& operator[](uint32 inIndex) const
+            const Pixel<dtype>& operator[](uint32 inIndex) const noexcept
             {
                 return pixels_[inIndex];
             }
@@ -165,7 +152,7 @@ namespace nc
             /// @return
             ///              const_iterator
             ///
-            const_iterator begin() const noexcept
+            const_iterator begin() const noexcept  
             {
                 return pixels_.cbegin();
             }
@@ -177,7 +164,7 @@ namespace nc
             /// @return
             ///              const_iterator
             ///
-            const_iterator end() const noexcept
+            const_iterator end() const noexcept 
             {
                 return pixels_.cend();
             }
@@ -189,7 +176,7 @@ namespace nc
             /// @return
             ///              number of pixels in the cluster
             ///
-            uint32 size() const noexcept
+            uint32 size() const noexcept 
             {
                 return static_cast<uint32>(pixels_.size());
             }
@@ -201,7 +188,7 @@ namespace nc
             /// @return
             ///              minimum row number of the cluster
             ///
-            uint32 clusterId() const noexcept
+            uint32 clusterId() const noexcept 
             {
                 return clusterId_;
             }
@@ -213,7 +200,7 @@ namespace nc
             /// @return
             ///              minimum row number of the cluster
             ///
-            uint32 rowMin() const noexcept
+            uint32 rowMin() const noexcept 
             {
                 return rowMin_;
             }
@@ -225,7 +212,7 @@ namespace nc
             /// @return
             ///              maximum row number of the cluster
             ///
-            uint32 rowMax() const noexcept
+            uint32 rowMax() const noexcept 
             {
                 return rowMax_;
             }
@@ -237,7 +224,7 @@ namespace nc
             /// @return
             ///              minimum column number of the cluster
             ///
-            uint32 colMin() const noexcept
+            uint32 colMin() const noexcept 
             {
                 return colMin_;
             }
@@ -249,7 +236,7 @@ namespace nc
             /// @return
             ///              maximum column number of the cluster
             ///
-            uint32 colMax() const noexcept
+            uint32 colMax() const noexcept 
             {
                 return colMax_;
             }
@@ -261,7 +248,7 @@ namespace nc
             /// @return
             ///              number of rows
             ///
-            uint32 height() const noexcept
+            uint32 height() const noexcept 
             {
                 return rowMax_ - rowMin_ + 1;
             }
@@ -273,7 +260,7 @@ namespace nc
             /// @return
             ///              number of columns
             ///
-            uint32 width() const noexcept
+            uint32 width() const noexcept 
             {
                 return colMax_ - colMin_ + 1;
             }
@@ -285,7 +272,7 @@ namespace nc
             /// @return
             ///              summed cluster intensity
             ///
-            dtype intensity() const noexcept
+            dtype intensity() const noexcept 
             {
                 return intensity_;
             }
@@ -297,7 +284,7 @@ namespace nc
             /// @return
             ///              peak pixel intensity
             ///
-            dtype peakPixelIntensity() const noexcept
+            dtype peakPixelIntensity() const noexcept 
             {
                 return peakPixelIntensity_;
             }
@@ -309,7 +296,7 @@ namespace nc
             /// @return
             ///              eod
             ///
-            double eod() const noexcept
+            double eod() const noexcept 
             {
                 return eod_;
             }
@@ -380,6 +367,21 @@ namespace nc
                 inStream << inCluster.str();
                 return inStream;
             }
+
+        private:
+            //================================Attributes===============================
+            int32                       clusterId_{ -1 };
+            std::vector<Pixel<dtype> >  pixels_{};
+
+            uint32                      rowMin_{ std::numeric_limits<uint32>::max() }; // largest possible number
+            uint32                      rowMax_{ 0 };
+            uint32                      colMin_{ std::numeric_limits<uint32>::max() }; // largest possible number
+            uint32                      colMax_{ 0 };
+
+            dtype                       intensity_{ 0 };
+            dtype                       peakPixelIntensity_{ 0 };
+
+            double                      eod_{ 1.0 };
         };
-    }
-}
+    }  // namespace imageProcessing
+} // namespace nc

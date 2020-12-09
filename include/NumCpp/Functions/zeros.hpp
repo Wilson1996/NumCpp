@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,11 +22,12 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Functions for working with NdArrays
 ///
 #pragma once
 
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
 #include "NumCpp/Core/Shape.hpp"
 #include "NumCpp/Core/Types.hpp"
 #include "NumCpp/Functions/full.hpp"
@@ -47,8 +47,10 @@ namespace nc
     ///				NdArray
     ///
     template<typename dtype>
-    NdArray<dtype> zeros(uint32 inSquareSize) noexcept
+    NdArray<dtype> zeros(uint32 inSquareSize) 
     {
+        STATIC_ASSERT_ARITHMETIC_OR_COMPLEX(dtype);
+
         return full(inSquareSize, dtype{ 0 });
     }
 
@@ -64,8 +66,10 @@ namespace nc
     ///				NdArray
     ///
     template<typename dtype>
-    NdArray<dtype> zeros(uint32 inNumRows, uint32 inNumCols) noexcept
+    NdArray<dtype> zeros(uint32 inNumRows, uint32 inNumCols) 
     {
+        STATIC_ASSERT_ARITHMETIC_OR_COMPLEX(dtype);
+
         return full(inNumRows, inNumCols, dtype{ 0 });
     }
 
@@ -81,8 +85,10 @@ namespace nc
     ///				NdArray
     ///
     template<typename dtype>
-    NdArray<dtype> zeros(const Shape& inShape) noexcept
+    NdArray<dtype> zeros(const Shape& inShape) 
     {
+        STATIC_ASSERT_ARITHMETIC_OR_COMPLEX(dtype);
+
         return full(inShape, dtype{ 0 });
     }
-}
+} // namespace nc

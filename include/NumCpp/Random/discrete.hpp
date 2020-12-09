@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,14 +22,15 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// "discrete" distrubution.
 ///
 #pragma once
 
-#include "NumCpp/Core/Error.hpp"
+#include "NumCpp/Core/Internal/Error.hpp"
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
+#include "NumCpp/Core/Internal/StlAlgorithms.hpp"
 #include "NumCpp/Core/Shape.hpp"
-#include "NumCpp/Core/StlAlgorithms.hpp"
 #include "NumCpp/NdArray.hpp"
 #include "NumCpp/Random/generator.hpp"
 
@@ -41,6 +41,26 @@ namespace nc
 {
     namespace random
     {
+        //============================================================================
+        // Method Description:
+        ///						Single random value sampled from the from the 
+        ///                     "discrete" distrubution.  It produces integers in the 
+        ///                     range [0, n) with the probability of producing each value
+        ///                     is specified by the parameters of the distribution.
+        ///
+        ///	@param		inWeights
+        /// @return
+        ///				NdArray
+        ///
+        template<typename dtype>
+        dtype discrete(const NdArray<double>& inWeights)
+        {
+            STATIC_ASSERT_INTEGER(dtype);
+
+            boost::random::discrete_distribution<dtype> dist(inWeights.cbegin(), inWeights.cend());
+            return dist(generator_);
+        }
+
         //============================================================================
         // Method Description:
         ///						Create an array of the given shape and populate it with
@@ -64,12 +84,12 @@ namespace nc
             boost::random::discrete_distribution<dtype> dist(inWeights.cbegin(), inWeights.cend());
 
             stl_algorithms::for_each(returnArray.begin(), returnArray.end(),
-                [&dist](dtype& value) noexcept -> void
+                [&dist](dtype& value)  -> void
                 { 
                     value = dist(generator_);
                 });
 
             return returnArray;
         }
-    }
-}
+    }  // namespace random
+} // namespace nc

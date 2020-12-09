@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,14 +22,15 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Functions for working with NdArrays
 ///
 #pragma once
 
+#include "NumCpp/Core/Internal/Error.hpp"
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
+#include "NumCpp/Core/Internal/StlAlgorithms.hpp"
 #include "NumCpp/NdArray.hpp"
-#include "NumCpp/Core/Error.hpp"
-#include "NumCpp/Core/StlAlgorithms.hpp"
 
 #include <cmath>
 #include <string>
@@ -49,9 +49,11 @@ namespace nc
     ///				value
     ///
     template<typename dtype>
-    double arctan2(dtype inY, dtype inX) noexcept
+    auto arctan2(dtype inY, dtype inX) noexcept 
     {
-        return std::atan2(static_cast<double>(inY), static_cast<double>(inX));
+        STATIC_ASSERT_ARITHMETIC(dtype);
+
+        return std::atan2(inY, inX);
     }
 
     //============================================================================
@@ -66,20 +68,20 @@ namespace nc
     ///				NdArray
     ///
     template<typename dtype>
-    NdArray<double> arctan2(const NdArray<dtype>& inY, const NdArray<dtype>& inX)
+    auto arctan2(const NdArray<dtype>& inY, const NdArray<dtype>& inX)
     {
         if (inX.shape() != inY.shape())
         {
             THROW_INVALID_ARGUMENT_ERROR("input array shapes are not consistant.");
         }
 
-        NdArray<double> returnArray(inY.shape());
+        NdArray<decltype(arctan2(dtype{0}, dtype{0}))> returnArray(inY.shape());
         stl_algorithms::transform(inY.cbegin(), inY.cend(), inX.cbegin(), returnArray.begin(),
-            [](dtype y, dtype x) noexcept -> double
+            [](dtype y, dtype x) noexcept -> auto
             {
                 return arctan2(y, x); 
             });
 
         return returnArray;
     }
-}
+}  // namespace nc

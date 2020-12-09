@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,18 +22,41 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Draw samples from a uniform distribution.
 ///
 #pragma once
 
 #include "NumCpp/Core/DtypeInfo.hpp"
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
 #include "NumCpp/Random/randFloat.hpp"
 
 namespace nc
 {
     namespace random
     {
+        //============================================================================
+        // Method Description:
+        ///						Draw sample from a uniform distribution.
+        ///
+        ///						Samples are uniformly distributed over the half -
+        ///						open interval[low, high) (includes low, but excludes high)
+        ///
+        ///                     NumPy Reference: https://docs.scipy.org/doc/numpy/reference/generated/numpy.random.uniform.html#numpy.random.uniform
+        ///
+        /// @param				inLow
+        /// @param				inHigh
+        /// @return
+        ///				NdArray
+        ///
+        template<typename dtype>
+        dtype uniform(dtype inLow, dtype inHigh)
+        {
+            STATIC_ASSERT_FLOAT(dtype);
+
+            return randFloat(inLow, inHigh);
+        }
+
         //============================================================================
         // Method Description:
         ///						Draw samples from a uniform distribution.
@@ -53,7 +75,9 @@ namespace nc
         template<typename dtype>
         NdArray<dtype> uniform(const Shape& inShape, dtype inLow, dtype inHigh)
         {
+            STATIC_ASSERT_FLOAT(dtype);
+
             return randFloat(inShape, inLow, inHigh);
         }
-    }
-}
+    } // namespace random
+} // namespace nc

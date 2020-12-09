@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,13 +22,14 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// matrix svd
 ///
 #pragma once
 
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
+#include "NumCpp/Functions/diagflat.hpp"
 #include "NumCpp/Linalg/svd/SVDClass.hpp"
-#include "NumCpp/Functions/diagFlat.hpp"
 #include "NumCpp/NdArray.hpp"
 
 #include <utility>
@@ -50,14 +50,18 @@ namespace nc
         /// @param				outVt: NdArray output V transpose
         ///
         template<typename dtype>
-        void svd(const NdArray<dtype>& inArray, NdArray<double>& outU, NdArray<double>& outS, NdArray<double>& outVt) noexcept
+        void svd(const NdArray<dtype>& inArray, NdArray<double>& outU, NdArray<double>& outS, NdArray<double>& outVt)
         {
+            STATIC_ASSERT_ARITHMETIC(dtype);
+
             SVD svdSolver(inArray.template astype<double>());
             outU = svdSolver.u();
-            outVt = svdSolver.v().transpose();
 
-            NdArray<double> s = diagflat(svdSolver.s());
+            NdArray<double> vt = svdSolver.v().transpose();
+            outVt = std::move(vt);
+
+            NdArray<double> s = diagflat(svdSolver.s(), 0);
             outS = std::move(s);
         }
-    }
-}
+    }  // namespace linalg
+}  // namespace nc

@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,12 +22,13 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// matrix determinant.
 ///
 #pragma once
 
-#include "NumCpp/Core/Error.hpp"
+#include "NumCpp/Core/Internal/Error.hpp"
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
 #include "NumCpp/Core/Shape.hpp"
 #include "NumCpp/Core/Types.hpp"
 #include "NumCpp/NdArray.hpp"
@@ -55,6 +55,8 @@ namespace nc
         template<typename dtype>
         dtype det(const NdArray<dtype>& inArray)
         {
+            STATIC_ASSERT_ARITHMETIC(dtype);
+
             const Shape inShape = inArray.shape();
             if (inShape.rows != inShape.cols)
             {
@@ -65,11 +67,13 @@ namespace nc
             {
                 return inArray.front();
             }
-            else if (inShape.rows == 2)
+            
+            if (inShape.rows == 2)
             {
                 return inArray(0, 0) * inArray(1, 1) - inArray(0, 1) * inArray(1, 0);
             }
-            else if (inShape.rows == 3)
+
+            if (inShape.rows == 3)
             {
                 dtype aei = inArray(0, 0) * inArray(1, 1) * inArray(2, 2);
                 dtype bfg = inArray(0, 1) * inArray(1, 2) * inArray(2, 0);
@@ -80,33 +84,31 @@ namespace nc
 
                 return aei + bfg + cdh - ceg - bdi - afh;
             }
-            else
+            
+            dtype determinant = 0;
+            NdArray<dtype> submat(inShape.rows - 1);
+
+            for (uint32 c = 0; c < inShape.rows; ++c)
             {
-                dtype determinant = 0;
-                NdArray<dtype> submat(inShape.rows - 1);
-
-                for (uint32 c = 0; c < inShape.rows; ++c)
+                uint32 subi = 0;
+                for (uint32 i = 1; i < inShape.rows; ++i)
                 {
-                    uint32 subi = 0;
-                    for (uint32 i = 1; i < inShape.rows; ++i)
+                    uint32 subj = 0;
+                    for (uint32 j = 0; j < inShape.rows; ++j)
                     {
-                        uint32 subj = 0;
-                        for (uint32 j = 0; j < inShape.rows; ++j)
+                        if (j == c)
                         {
-                            if (j == c)
-                            {
-                                continue;
-                            }
-
-                            submat(subi, subj++) = inArray(i, j);
+                            continue;
                         }
-                        ++subi;
-                    }
-                    determinant += (static_cast<dtype>(std::pow(-1, c)) * inArray(0, c) * det(submat));
-                }
 
-                return determinant;
+                        submat(subi, subj++) = inArray(i, j);
+                    }
+                    ++subi;
+                }
+                determinant += (static_cast<dtype>(std::pow(-1, c)) * inArray(0, c) * det(submat));
             }
+
+            return determinant;
         }
-    }
-}
+    }  // namespace linalg
+}  // namespace nc

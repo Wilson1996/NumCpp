@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,14 +22,14 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Special Functions
 ///
 #pragma once
 
-#include "NumCpp/NdArray.hpp"
-#include "NumCpp/Core/StlAlgorithms.hpp"
+#include "NumCpp/Core/Internal/StlAlgorithms.hpp"
 #include "NumCpp/Core/Types.hpp"
+#include "NumCpp/NdArray.hpp"
 
 #include "boost/math/special_functions/factorials.hpp"
 
@@ -55,10 +54,8 @@ namespace nc
             {
                 return boost::math::factorial<double>(inValue);   
             }
-            else
-            {
-                return std::numeric_limits<double>::infinity();
-            }
+            
+            return std::numeric_limits<double>::infinity();
         }
 
         //============================================================================
@@ -70,7 +67,7 @@ namespace nc
         /// @return
         ///				NdArray<double>
         ///
-        inline NdArray<double> factorial(const NdArray<uint32>& inArray) noexcept
+        inline NdArray<double> factorial(const NdArray<uint32>& inArray)
         {
             NdArray<double> returnArray(inArray.shape());
 
@@ -82,5 +79,5 @@ namespace nc
 
             return returnArray;
         }
-    }
-}
+    }  // namespace special
+}  // namespace nc

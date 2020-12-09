@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,7 +22,7 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Performs Rodriques' rotation formula
 /// https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
 ///
@@ -49,7 +48,7 @@ namespace nc
         ///
         /// @return Vec3
         ///
-        inline Vec3 rodriguesRotation(const Vec3& k, double theta, const Vec3& v)
+        inline Vec3 rodriguesRotation(const Vec3& k, double theta, const Vec3& v) noexcept
         {
             const auto kUnit = k.normalize();
 
@@ -58,7 +57,7 @@ namespace nc
             auto kCrossV = kUnit.cross(v);
             kCrossV *= std::sin(theta);
 
-            auto kDotV = kUnit.dot(v);
+            const auto kDotV = kUnit.dot(v);
             auto kkDotV = kUnit * kDotV;
             kkDotV *= 1 - std::cos(theta);
 
@@ -80,9 +79,9 @@ namespace nc
         /// @return NdArray<double>
         ///
         template<typename dtype>
-        NdArray<double> rodriguesRotation(const NdArray<dtype>& k, double theta, NdArray<dtype>& v)
+        NdArray<double> rodriguesRotation(const NdArray<dtype>& k, double theta, const NdArray<dtype>& v)
         {
             return rodriguesRotation(Vec3(k), theta, Vec3(v)).toNdArray();
         }
-    }
-}
+    }  // namespace rotations
+}  // namespace nc

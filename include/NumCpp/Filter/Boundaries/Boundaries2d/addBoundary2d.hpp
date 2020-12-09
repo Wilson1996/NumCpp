@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,20 +22,21 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Wrap boundary
 ///
 #pragma once
 
-#include "NumCpp/Core/Error.hpp"
+#include "NumCpp/Core/Internal/Error.hpp"
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
 #include "NumCpp/Core/Types.hpp"
-#include "NumCpp/NdArray.hpp"
-#include "NumCpp/Filter/Boundaries/Boundary.hpp"
 #include "NumCpp/Filter/Boundaries/Boundaries2d/constant2d.hpp"
-#include "NumCpp/Filter/Boundaries/Boundaries2d/nearest2d.hpp"
 #include "NumCpp/Filter/Boundaries/Boundaries2d/mirror2d.hpp"
+#include "NumCpp/Filter/Boundaries/Boundaries2d/nearest2d.hpp"
 #include "NumCpp/Filter/Boundaries/Boundaries2d/reflect2d.hpp"
 #include "NumCpp/Filter/Boundaries/Boundaries2d/wrap2d.hpp"
+#include "NumCpp/Filter/Boundaries/Boundary.hpp"
+#include "NumCpp/NdArray.hpp"
 
 #include <string>
 
@@ -60,6 +60,8 @@ namespace nc
             template<typename dtype>
             NdArray<dtype> addBoundary2d(const NdArray<dtype>& inImage, Boundary inBoundaryType, uint32 inKernalSize, dtype inConstantValue = 0)
             {
+                STATIC_ASSERT_ARITHMETIC(dtype);
+
                 if (inKernalSize % 2 == 0)
                 {
                     THROW_INVALID_ARGUMENT_ERROR("input kernal size must be an odd value.");
@@ -91,13 +93,13 @@ namespace nc
                     }
                     default:
                     {
-                        // This can't actually happen but just adding to get rid of compiler warning
-                        THROW_INVALID_ARGUMENT_ERROR("ERROR!");
+                        THROW_INVALID_ARGUMENT_ERROR("Unimplemented axis type.");
+                        return {}; // get rid of compiler warning
                     }
                 }
 
                 return NdArray<dtype>(); // get rid of compiler warning
             }
-        }
-    }
-}
+        } // namespace boundary
+    }  // namespace filter
+}  // namespace nc

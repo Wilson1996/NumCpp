@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,12 +22,13 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Functions for working with NdArrays
 ///
 #pragma once
 
-#include "NumCpp/Core/Error.hpp"
+#include "NumCpp/Core/Internal/Error.hpp"
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
 #include "NumCpp/Core/Shape.hpp"
 #include "NumCpp/Core/Types.hpp"
 #include "NumCpp/NdArray.hpp"
@@ -52,6 +52,8 @@ namespace nc
     template<typename dtype>
     NdArray<dtype> cross(const NdArray<dtype>& inArray1, const NdArray<dtype>& inArray2, Axis inAxis = Axis::NONE)
     {
+        STATIC_ASSERT_ARITHMETIC_OR_COMPLEX(dtype);
+
         if (inArray1.shape() != inArray2.shape())
         {
             THROW_INVALID_ARGUMENT_ERROR("the input array dimensions are not consistant.");
@@ -88,9 +90,8 @@ namespace nc
                     }
                     default:
                     {
-                        // this isn't actually possible, just putting this here to get rid
-                        // of the compiler warning.
-                        return NdArray<dtype>(0);
+                        THROW_INVALID_ARGUMENT_ERROR("Unimplemented array size.");
+                        return {}; // get rid of compiler warning
                     }
                 }
             }
@@ -103,19 +104,20 @@ namespace nc
                 }
 
                 Shape returnArrayShape;
+                returnArrayShape.cols = arrayShape.cols;
                 if (arrayShape.rows == 2)
                 {
-                    returnArrayShape = Shape(1, arrayShape.cols);
+                    returnArrayShape.rows = 1;
                 }
                 else
                 {
-                    returnArrayShape = Shape(3, arrayShape.cols);
+                    returnArrayShape.rows = 3;
                 }
 
                 NdArray<dtype> returnArray(returnArrayShape);
                 for (uint32 col = 0; col < arrayShape.cols; ++col)
                 {
-                    const int32 theCol = static_cast<int32>(col);
+                    const auto theCol = static_cast<int32>(col);
                     NdArray<dtype> vec1 = inArray1({ 0, static_cast<int32>(arrayShape.rows) }, { theCol, theCol + 1 });
                     NdArray<dtype> vec2 = inArray2({ 0, static_cast<int32>(arrayShape.rows) }, { theCol, theCol + 1 });
                     NdArray<dtype> vecCross = cross(vec1, vec2, Axis::NONE);
@@ -134,19 +136,20 @@ namespace nc
                 }
 
                 Shape returnArrayShape;
+                returnArrayShape.rows = arrayShape.rows;
                 if (arrayShape.cols == 2)
                 {
-                    returnArrayShape = Shape(arrayShape.rows, 1);
+                    returnArrayShape.cols = 1;
                 }
                 else
                 {
-                    returnArrayShape = Shape(arrayShape.rows, 3);
+                    returnArrayShape.cols = 3;
                 }
 
                 NdArray<dtype> returnArray(returnArrayShape);
                 for (uint32 row = 0; row < arrayShape.rows; ++row)
                 {
-                    const int32 theRow = static_cast<int32>(row);
+                    const auto theRow = static_cast<int32>(row);
                     NdArray<dtype> vec1 = inArray1({ theRow, theRow + 1 }, { 0, static_cast<int32>(arrayShape.cols) });
                     NdArray<dtype> vec2 = inArray2({ theRow, theRow + 1 }, { 0, static_cast<int32>(arrayShape.cols) });
                     NdArray<dtype> vecCross = cross(vec1, vec2, Axis::NONE);
@@ -158,10 +161,9 @@ namespace nc
             }
             default:
             {
-                // this isn't actually possible, just putting this here to get rid
-                // of the compiler warning.
-                return NdArray<dtype>(0);
+                THROW_INVALID_ARGUMENT_ERROR("Unimplemented axis type.");
+                return {}; // get rid of compiler warning
             }
         }
     }
-}
+}  // namespace nc

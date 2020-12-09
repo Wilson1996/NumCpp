@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,11 +22,12 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Functions for working with NdArrays
 ///
 #pragma once
 
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
 #include "NumCpp/Core/Shape.hpp"
 #include "NumCpp/Core/Types.hpp"
 #include "NumCpp/NdArray.hpp"
@@ -48,8 +48,10 @@ namespace nc
     ///				NdArray
     ///
     template<typename dtype>
-    NdArray<dtype> tril(uint32 inN, int32 inOffset = 0) noexcept
+    NdArray<dtype> tril(uint32 inN, int32 inOffset = 0) 
     {
+        STATIC_ASSERT_ARITHMETIC_OR_COMPLEX(dtype);
+
         uint32 rowStart = 0;
         uint32 colStart = 0;
         if (inOffset > 0)
@@ -94,8 +96,10 @@ namespace nc
     ///				NdArray
     ///
     template<typename dtype>
-    NdArray<dtype> tril(uint32 inN, uint32 inM, int32 inOffset = 0) noexcept
+    NdArray<dtype> tril(uint32 inN, uint32 inM, int32 inOffset = 0) 
     {
+        STATIC_ASSERT_ARITHMETIC_OR_COMPLEX(dtype);
+
         uint32 rowStart = 0;
         uint32 colStart = 0;
         if (inOffset > 0)
@@ -127,7 +131,7 @@ namespace nc
 
     // forward declare
     template<typename dtype>
-    NdArray<dtype> triu(uint32 inN, uint32 inM, int32 inOffset = 0) noexcept;
+    NdArray<dtype> triu(uint32 inN, uint32 inM, int32 inOffset = 0) ;
 
     //============================================================================
     // Method Description:
@@ -147,8 +151,10 @@ namespace nc
     ///				NdArray
     ///
     template<typename dtype>
-    NdArray<dtype> tril(const NdArray<dtype>& inArray, int32 inOffset = 0) noexcept
+    NdArray<dtype> tril(const NdArray<dtype>& inArray, int32 inOffset = 0) 
     {
+        STATIC_ASSERT_ARITHMETIC_OR_COMPLEX(dtype);
+
         const Shape inShape = inArray.shape();
         auto outArray = inArray.copy();
         outArray.putMask(triu<bool>(inShape.rows, inShape.cols, inOffset + 1), 0);
@@ -170,8 +176,10 @@ namespace nc
     ///				NdArray
     ///
     template<typename dtype>
-    NdArray<dtype> triu(uint32 inN, uint32 inM, int32 inOffset) noexcept
+    NdArray<dtype> triu(uint32 inN, uint32 inM, int32 inOffset) 
     {
+        STATIC_ASSERT_ARITHMETIC_OR_COMPLEX(dtype);
+
         // because i'm stealing the lines of code from tril and reversing it, this is necessary
         inOffset -= 1;
 
@@ -218,8 +226,10 @@ namespace nc
     ///				NdArray
     ///
     template<typename dtype>
-    NdArray<dtype> triu(uint32 inN, int32 inOffset = 0) noexcept
+    NdArray<dtype> triu(uint32 inN, int32 inOffset = 0) 
     {
+        STATIC_ASSERT_ARITHMETIC_OR_COMPLEX(dtype);
+
         return tril<dtype>(inN, -inOffset).transpose();
     }
 
@@ -241,11 +251,13 @@ namespace nc
     ///				NdArray
     ///
     template<typename dtype>
-    NdArray<dtype> triu(const NdArray<dtype>& inArray, int32 inOffset = 0) noexcept
+    NdArray<dtype> triu(const NdArray<dtype>& inArray, int32 inOffset = 0) 
     {
+        STATIC_ASSERT_ARITHMETIC_OR_COMPLEX(dtype);
+
         const Shape inShape = inArray.shape();
         auto outArray = inArray.copy();
         outArray.putMask(tril<bool>(inShape.rows, inShape.cols, inOffset - 1), 0);
         return outArray;
     }
-}
+}  // namespace nc

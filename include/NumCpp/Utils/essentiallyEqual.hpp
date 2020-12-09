@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,14 +22,17 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// tests that 2 floating point values are "essentially equal"
 ///
 #pragma once
 
 #include "NumCpp/Core/DtypeInfo.hpp"
+#include "NumCpp/Core/Internal/StdComplexOperators.hpp"
+#include "NumCpp/Core/Internal/TypeTraits.hpp"
 
 #include <cmath>
+#include <complex>
 #include <string>
 
 namespace nc
@@ -42,17 +44,31 @@ namespace nc
         ///
         /// @param      inValue1
         /// @param      inValue2
+        ///
+        /// @return     bool
+        ///
+        template<typename dtype, 
+            enable_if_t<std::is_integral<dtype>::value, int> = 0>
+        bool essentiallyEqual(dtype inValue1, dtype inValue2) noexcept 
+        {
+            return inValue1 == inValue2;
+        }
+
+        //============================================================================
+        ///						tests that 2 floating point values are "essentially equal"
+        ///
+        /// @param      inValue1
+        /// @param      inValue2
         /// @param      inEpsilon
         ///
         /// @return     bool
         ///
-        template<typename dtype>
-        constexpr bool essentiallyEqual(dtype inValue1, dtype inValue2, dtype inEpsilon) noexcept
+        template<typename dtype, 
+            enable_if_t<std::is_floating_point<dtype>::value, int> = 0>
+        bool essentiallyEqual(dtype inValue1, dtype inValue2, dtype inEpsilon) noexcept 
         {
-            STATIC_ASSERT_FLOAT(dtype);
-
             return std::abs(inValue1 - inValue2) <= ((std::abs(inValue1) > std::abs(inValue2) ?
-                std::abs(inValue2) : std::abs(inValue1)) * inEpsilon);
+                std::abs(inValue2) : std::abs(inValue1)) * std::abs(inEpsilon));
         }
 
         //============================================================================
@@ -63,10 +79,59 @@ namespace nc
         ///
         /// @return     bool
         ///
-        template<typename dtype>
-        constexpr bool essentiallyEqual(dtype inValue1, dtype inValue2) noexcept
+        template<typename dtype, 
+            enable_if_t<std::is_integral<dtype>::value, int> = 0>
+        bool essentiallyEqual(const std::complex<dtype>& inValue1, const std::complex<dtype>& inValue2) noexcept
+        {
+            return inValue1 == inValue2;
+        }
+
+        //============================================================================
+        ///						tests that 2 floating point values are "essentially equal"
+        ///
+        /// @param      inValue1
+        /// @param      inValue2
+        /// @param      inEpsilon
+        ///
+        /// @return     bool
+        ///
+        template<typename dtype, 
+            enable_if_t<std::is_floating_point<dtype>::value, int> = 0>
+            bool essentiallyEqual(const std::complex<dtype>& inValue1, const std::complex<dtype>& inValue2,
+                const std::complex<dtype>& inEpsilon) noexcept
+        {
+            return std::abs(inValue1 - inValue2) <= ((std::abs(inValue1) > std::abs(inValue2) ?
+                std::abs(inValue2) : std::abs(inValue1)) * std::abs(inEpsilon));
+        }
+
+        //============================================================================
+        ///						tests that 2 floating point values are "essentially equal"
+        ///
+        /// @param      inValue1
+        /// @param      inValue2
+        ///
+        /// @return     bool
+        ///
+        template<typename dtype, 
+            enable_if_t<std::is_floating_point<dtype>::value, int> = 0>
+        bool essentiallyEqual(dtype inValue1, dtype inValue2) noexcept
         {
             return essentiallyEqual(inValue1, inValue2, DtypeInfo<dtype>::epsilon());
         }
-    }
-}
+
+        //============================================================================
+        ///						tests that 2 floating point values are "essentially equal"
+        ///
+        /// @param      inValue1
+        /// @param      inValue2
+        ///
+        /// @return     bool
+        ///
+        template<typename dtype, 
+            enable_if_t<std::is_floating_point<dtype>::value, int> = 0>
+        bool essentiallyEqual(const std::complex<dtype>& inValue1, const std::complex<dtype>& inValue2) noexcept
+        {
+            return essentiallyEqual(inValue1, inValue2, DtypeInfo<std::complex<dtype>>::epsilon());
+        }
+    }  // namespace utils
+}  // namespace nc

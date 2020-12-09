@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,11 +22,14 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Holds info about the dtype
 ///
 #pragma once
 
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
+
+#include <complex>
 #include <limits>
 
 namespace nc
@@ -44,8 +46,10 @@ namespace nc
         ///
         /// @return     number of bits
         ///
-        static constexpr dtype bits() noexcept
+        static constexpr int bits() noexcept
         {
+            STATIC_ASSERT_ARITHMETIC(dtype);
+
             return std::numeric_limits<dtype>::digits;
         }
 
@@ -57,6 +61,8 @@ namespace nc
         ///
         static constexpr dtype epsilon() noexcept
         {
+            STATIC_ASSERT_ARITHMETIC(dtype);
+
             return std::numeric_limits<dtype>::epsilon();
         }
 
@@ -67,6 +73,8 @@ namespace nc
         ///
         static constexpr bool isInteger() noexcept
         {
+            STATIC_ASSERT_ARITHMETIC(dtype);
+
             return std::numeric_limits<dtype>::is_integer;
         }
 
@@ -77,6 +85,8 @@ namespace nc
         ///
         static constexpr bool isSigned() noexcept
         {
+            STATIC_ASSERT_ARITHMETIC(dtype);
+
             return std::numeric_limits<dtype>::is_signed;
         }
 
@@ -87,6 +97,8 @@ namespace nc
         ///
         static constexpr dtype min() noexcept
         {
+            STATIC_ASSERT_ARITHMETIC(dtype);
+
             return std::numeric_limits<dtype>::min();
         }
 
@@ -97,7 +109,90 @@ namespace nc
         ///
         static constexpr dtype max() noexcept
         {
+            STATIC_ASSERT_ARITHMETIC(dtype);
+
             return std::numeric_limits<dtype>::max();
         }
     };
-}
+
+    //================================================================================
+    ///						Holds info about the std::complex
+    template<typename dtype>
+    class DtypeInfo<std::complex<dtype>>
+    {
+    public:
+        //============================================================================
+        ///						For integer types: number of non-sign bits in the representation.
+        ///						For floating types : number of digits(in radix base) in the mantissa
+        ///
+        /// @return     number of bits
+        ///
+        static constexpr int bits() noexcept
+        {
+            STATIC_ASSERT_ARITHMETIC(dtype);
+
+            return std::numeric_limits<dtype>::digits;
+        }
+
+        //============================================================================
+        ///						Machine epsilon (the difference between 1 and the least
+        ///						value greater than 1 that is representable).
+        ///
+        /// @return     dtype
+        ///
+        static constexpr std::complex<dtype> epsilon() noexcept
+        {
+            STATIC_ASSERT_ARITHMETIC(dtype);
+
+            return { DtypeInfo<dtype>::epsilon(), DtypeInfo<dtype>::epsilon() };
+        }
+
+        //============================================================================
+        ///						True if type is integer.
+        ///
+        /// @return     bool
+        ///
+        static constexpr bool isInteger() noexcept
+        {
+            STATIC_ASSERT_ARITHMETIC(dtype);
+
+            return std::numeric_limits<dtype>::is_integer;
+        }
+
+        //============================================================================
+        ///						True if type is signed.
+        ///
+        /// @return     bool
+        ///
+        static constexpr bool isSigned() noexcept
+        {
+            STATIC_ASSERT_ARITHMETIC(dtype);
+
+            return std::numeric_limits<dtype>::is_signed;
+        }
+
+        //============================================================================
+        ///						Returns the minimum value of the dtype
+        ///
+        /// @return     min value
+        ///
+        static constexpr std::complex<dtype> min() noexcept
+        {
+            STATIC_ASSERT_ARITHMETIC(dtype);
+
+            return { DtypeInfo<dtype>::min(), DtypeInfo<dtype>::min() };
+        }
+
+        //============================================================================
+        ///						Returns the maximum value of the dtype
+        ///
+        /// @return     max value
+        ///
+        static constexpr std::complex<dtype> max() noexcept
+        {
+            STATIC_ASSERT_ARITHMETIC(dtype);
+
+            return { DtypeInfo<dtype>::max(), DtypeInfo<dtype>::max() };
+        }
+    };
+}  // namespace nc

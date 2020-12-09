@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,14 +22,15 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Functions for working with NdArrays
 ///
 #pragma once
 
-#include "NumCpp/Core/Error.hpp"
+#include "NumCpp/Core/Internal/Error.hpp"
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
+#include "NumCpp/Core/Internal/StlAlgorithms.hpp"
 #include "NumCpp/Core/Shape.hpp"
-#include "NumCpp/Core/StlAlgorithms.hpp"
 #include "NumCpp/Core/Types.hpp"
 #include "NumCpp/Functions/argmin.hpp"
 #include "NumCpp/Functions/clip.hpp"
@@ -62,16 +62,18 @@ namespace nc
     NdArray<dtype> nanpercentile(const NdArray<dtype>& inArray, double inPercentile,
         Axis inAxis = Axis::NONE, const std::string& inInterpMethod = "linear")
     {
+        STATIC_ASSERT_FLOAT(dtype);
+
         if (inPercentile < 0.0 || inPercentile > 100.0)
         {
             THROW_INVALID_ARGUMENT_ERROR("input percentile value must be of the range [0, 100].");
         }
 
-        if (inInterpMethod.compare("linear") != 0 &&
-            inInterpMethod.compare("lower") != 0 &&
-            inInterpMethod.compare("higher") != 0 &&
-            inInterpMethod.compare("nearest") != 0 &&
-            inInterpMethod.compare("midpoint") != 0)
+        if (inInterpMethod != "linear" &&
+            inInterpMethod != "lower" &&
+            inInterpMethod != "higher" &&
+            inInterpMethod != "nearest" &&
+            inInterpMethod != "midpoint")
         {
             std::string errStr = "input interpolation method is not a vaid option.\n";
             errStr += "\tValid options are 'linear', 'lower', 'higher', 'nearest', 'midpoint'.";
@@ -94,7 +96,8 @@ namespace nc
                     }
                     return NdArray<dtype>(0);
                 }
-                else if (utils::essentiallyEqual(inPercentile, 100.0))
+
+                if (utils::essentiallyEqual(inPercentile, 100.0))
                 {
                     for (int32 i = static_cast<int32>(inArray.size()) - 1; i > -1; --i)
                     {
@@ -123,12 +126,12 @@ namespace nc
                     return NdArray<dtype>(0);
                 }
 
-                const int32 i = static_cast<int32>(std::floor(static_cast<double>(numNonNan - 1) * inPercentile / 100.0));
-                const uint32 indexLower = static_cast<uint32>(clip<uint32>(i, 0, numNonNan - 2));
+                const auto i = static_cast<int32>(std::floor(static_cast<double>(numNonNan - 1) * inPercentile / 100.0));
+                const auto indexLower = static_cast<uint32>(clip<uint32>(i, 0, numNonNan - 2));
 
                 stl_algorithms::sort(arrayCopy.begin(), arrayCopy.end());
 
-                if (inInterpMethod.compare("linear") == 0)
+                if (inInterpMethod == "linear")
                 {
                     const double percentI = static_cast<double>(indexLower) / static_cast<double>(numNonNan - 1);
                     const double fraction = (inPercentile / 100.0 - percentI) /
@@ -138,17 +141,20 @@ namespace nc
                     NdArray<dtype> returnArray = { returnValue };
                     return returnArray;
                 }
-                else if (inInterpMethod.compare("lower") == 0)
+
+                if (inInterpMethod == "lower")
                 {
                     NdArray<dtype> returnArray = { arrayCopy[indexLower] };
                     return returnArray;
                 }
-                else if (inInterpMethod.compare("higher") == 0)
+
+                if (inInterpMethod == "higher")
                 {
                     NdArray<dtype> returnArray = { arrayCopy[indexLower + 1] };
                     return returnArray;
                 }
-                else if (inInterpMethod.compare("nearest") == 0)
+
+                if (inInterpMethod == "nearest")
                 {
                     const double percent = inPercentile / 100.0;
                     const double percent1 = static_cast<double>(indexLower) / static_cast<double>(numNonNan - 1);
@@ -170,15 +176,14 @@ namespace nc
                         }
                     }
                 }
-                else if (inInterpMethod.compare("midpoint") == 0)
+
+                if (inInterpMethod == "midpoint")
                 {
                     NdArray<dtype> returnArray = { (arrayCopy[indexLower] + arrayCopy[indexLower + 1]) / 2.0 };
                     return returnArray;
                 }
-                else
-                {
-                    THROW_INVALID_ARGUMENT_ERROR("intperpolation method has not been implemented: " + inInterpMethod);
-                }
+
+                THROW_INVALID_ARGUMENT_ERROR("intperpolation method has not been implemented: " + inInterpMethod);
 
                 // this isn't actually possible, just putting this here to get rid
                 // of the compiler warning.
@@ -231,14 +236,9 @@ namespace nc
             }
             default:
             {
-                // this isn't actually possible, just putting this here to get rid
-                // of the compiler warning.
-                return NdArray<dtype>(0);
+                THROW_INVALID_ARGUMENT_ERROR("Unimplemented axis type.");
+                return {}; // get rid of compiler warning
             }
-
-            // this isn't actually possible, just putting this here to get rid
-            // of the compiler warning.
-            return NdArray<dtype>(0);
         }
     }
-}
+} // namespace nc

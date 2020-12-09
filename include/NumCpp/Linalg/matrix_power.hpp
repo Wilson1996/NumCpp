@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,12 +22,13 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Raise a square matrix to the (integer) power n.
 ///
 #pragma once
 
-#include "NumCpp/Core/Error.hpp"
+#include "NumCpp/Core/Internal/Error.hpp"
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
 #include "NumCpp/Core/Shape.hpp"
 #include "NumCpp/Core/Types.hpp"
 #include "NumCpp/Functions/dot.hpp"
@@ -61,6 +61,8 @@ namespace nc
         template<typename dtype>
         NdArray<double> matrix_power(const NdArray<dtype>& inArray, int16 inPower)
         {
+            STATIC_ASSERT_ARITHMETIC_OR_COMPLEX(dtype);
+
             const Shape inShape = inArray.shape();
             if (inShape.rows != inShape.cols)
             {
@@ -71,15 +73,18 @@ namespace nc
             {
                 return identity<double>(inShape.rows);
             }
-            else if (inPower == 1)
+
+            if (inPower == 1)
             {
                 return inArray.template astype<double>();
             }
-            else if (inPower == -1)
+
+            if (inPower == -1)
             {
                 return inv(inArray);
             }
-            else if (inPower > 1)
+
+            if (inPower > 1)
             {
                 NdArray<double> inArrayDouble = inArray.template astype<double>();
                 NdArray<double> returnArray = dot(inArrayDouble, inArrayDouble);
@@ -89,17 +94,15 @@ namespace nc
                 }
                 return returnArray;
             }
-            else
+
+            NdArray<double> inverse = inv(inArray);
+            NdArray<double> returnArray = dot(inverse, inverse);
+            inPower *= -1;
+            for (int16 i = 2; i < inPower; ++i)
             {
-                NdArray<double> inverse = inv(inArray);
-                NdArray<double> returnArray = dot(inverse, inverse);
-                inPower *= -1;
-                for (int16 i = 2; i < inPower; ++i)
-                {
-                    returnArray = dot(returnArray, inverse);
-                }
-                return returnArray;
+                returnArray = dot(returnArray, inverse);
             }
+            return returnArray;
         }
-    }
-}
+    } // namespace linalg
+}  // namespace nc

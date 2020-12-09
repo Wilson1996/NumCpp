@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,15 +22,16 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Special Functions
 ///
 #pragma once
 
-#include "NumCpp/NdArray.hpp"
-#include "NumCpp/Core/StlAlgorithms.hpp"
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
+#include "NumCpp/Core/Internal/StlAlgorithms.hpp"
 #include "NumCpp/Core/Types.hpp"
 #include "NumCpp/Functions/exp.hpp"
+#include "NumCpp/NdArray.hpp"
 
 namespace nc
 {
@@ -48,25 +48,27 @@ namespace nc
         /// @param      inAxis (Optional, default NONE)
         /// @return     NdArray<double>
         ///
-        template<typename T>
-        NdArray<double> softmax(const NdArray<T>& inArray, Axis inAxis = Axis::NONE) noexcept
+        template<typename dtype>
+        NdArray<double> softmax(const NdArray<dtype>& inArray, Axis inAxis = Axis::NONE) 
         {
+            STATIC_ASSERT_ARITHMETIC(dtype);
+
             switch (inAxis)
             {
                 case Axis::NONE:
                 {
-                    auto returnArray = exp(inArray);
-                    returnArray /= returnArray.sum().item();
+                    auto returnArray = exp(inArray).template astype<double>();
+                    returnArray /= static_cast<double>(returnArray.sum().item());
                     return returnArray;
                 }
                 case Axis::COL:
                 {
-                    auto returnArray = exp(inArray);
+                    auto returnArray = exp(inArray).template astype<double>();
                     auto expSums = returnArray.sum(inAxis);
 
                     for (uint32 row = 0; row < returnArray.shape().rows; ++row)
                     {
-                        double rowExpSum = expSums[row];
+                        const auto rowExpSum = static_cast<double>(expSums[row]);
                         stl_algorithms::for_each(returnArray.begin(row), returnArray.end(row), 
                             [rowExpSum](double& value) { value /= rowExpSum; });
                     }
@@ -75,12 +77,12 @@ namespace nc
                 }
                 case Axis::ROW:
                 {
-                    auto returnArray = exp(inArray).transpose();
-                    auto expSums = returnArray.sum(inAxis);
+                    auto returnArray = exp(inArray.transpose()).template astype<double>();
+                    auto expSums = returnArray.sum(Axis::COL);
 
                     for (uint32 row = 0; row < returnArray.shape().rows; ++row)
                     {
-                        double rowExpSum = expSums[row];
+                        const auto rowExpSum = static_cast<double>(expSums[row]);
                         stl_algorithms::for_each(returnArray.begin(row), returnArray.end(row), 
                             [rowExpSum](double& value) { value /= rowExpSum; });
                     }
@@ -89,11 +91,10 @@ namespace nc
                 }
                 default:
                 {
-                    // this isn't actually possible, just putting this here to get rid
-                    // of the compiler warning.
-                    return NdArray<double>(0);
+                    THROW_INVALID_ARGUMENT_ERROR("Unimplemented axis type.");
+                    return {}; // get rid of compiler warning
                 }
             }
         }
-    }
-}
+    } // namespace special
+}  // namespace nc

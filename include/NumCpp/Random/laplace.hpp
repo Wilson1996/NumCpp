@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,13 +22,14 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// "laplace" distrubution.
 ///
 #pragma once
 
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
+#include "NumCpp/Core/Internal/StlAlgorithms.hpp"
 #include "NumCpp/Core/Shape.hpp"
-#include "NumCpp/Core/StlAlgorithms.hpp"
 #include "NumCpp/NdArray.hpp"
 #include "NumCpp/Random/generator.hpp"
 
@@ -39,6 +39,26 @@ namespace nc
 {
     namespace random
     {
+        //============================================================================
+        // Method Description:
+        ///						Single random value sampled from the "laplace" distrubution.
+        ///
+        ///                     NumPy Reference: https://docs.scipy.org/doc/numpy/reference/generated/numpy.random.laplace.html#numpy.random.laplace
+        ///
+        /// @param				inLoc: (The position, mu, of the distribution peak. Default is 0)
+        /// @param				inScale: (float optional the exponential decay. Default is 1)
+        /// @return
+        ///				NdArray
+        ///
+        template<typename dtype>
+        dtype laplace(dtype inLoc = 0, dtype inScale = 1) 
+        {
+            STATIC_ASSERT_ARITHMETIC(dtype);
+
+            const boost::random::laplace_distribution<dtype> dist(inLoc, inScale);
+            return dist(generator_); 
+        }
+
         //============================================================================
         // Method Description:
         ///						Create an array of the given shape and populate it with
@@ -53,19 +73,21 @@ namespace nc
         ///				NdArray
         ///
         template<typename dtype>
-        NdArray<dtype> laplace(const Shape& inShape, dtype inLoc = 0, dtype inScale = 1) noexcept
+        NdArray<dtype> laplace(const Shape& inShape, dtype inLoc = 0, dtype inScale = 1) 
         {
+            STATIC_ASSERT_ARITHMETIC(dtype);
+
             NdArray<dtype> returnArray(inShape);
 
             const boost::random::laplace_distribution<dtype> dist(inLoc, inScale);
 
             stl_algorithms::for_each(returnArray.begin(), returnArray.end(),
-                [&dist](dtype& value) noexcept -> void
+                [&dist](dtype& value)  -> void
                 { 
                     value = dist(generator_); 
                 });
 
             return returnArray;
         }
-    }
-}
+    } // namespace random
+}  // namespace nc

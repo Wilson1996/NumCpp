@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,14 +22,16 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Functions for working with NdArrays
 ///
 #pragma once
 
-#include "NumCpp/Core/Error.hpp"
+#include "NumCpp/Core/Internal/Error.hpp"
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
 #include "NumCpp/Core/Types.hpp"
 #include "NumCpp/Functions/linspace.hpp"
+#include "NumCpp/Functions/sort.hpp"
 #include "NumCpp/Functions/zeros.hpp"
 #include "NumCpp/NdArray.hpp"
 
@@ -47,29 +48,35 @@ namespace nc
     ///
     ///
     /// @param				inArray
-    /// @param				inNumBins( default 10)
+    /// @param				inBinEdges: monotonically increasing array of bin edges, including the
+    ///                                 rightmost edge, allowing for non-uniform bin widths.
     ///
     /// @return
-    ///				std::pair of NdArrays; first is histogram counts, seconds is the bin edges
+    ///				array of histogram counts
     ///
     template<typename dtype>
-    std::pair<NdArray<uint32>, NdArray<double> > histogram(const NdArray<dtype>& inArray, uint32 inNumBins = 10)
+    NdArray<uint32> histogram(const NdArray<dtype>& inArray, const NdArray<double>& inBinEdges)
     {
-        if (inNumBins == 0)
+        STATIC_ASSERT_ARITHMETIC(dtype);
+
+        if (inBinEdges.size() < 2)
         {
-            THROW_INVALID_ARGUMENT_ERROR("number of bins must be positive.");
+            THROW_INVALID_ARGUMENT_ERROR("number of bin edges must be >= 2.");
         }
 
-        NdArray<uint32> histo = zeros<uint32>(1, inNumBins);
+        // sort just in case the user hasn't already
+        const auto binEdges = sort(inBinEdges);
 
-        const bool useEndPoint = true;
-        NdArray<double> binEdges = linspace(static_cast<double>(inArray.min().item()),
-            static_cast<double>(inArray.max().item()), inNumBins + 1, useEndPoint);
-
-        for (uint32 i = 0; i < inArray.size(); ++i)
+        NdArray<uint32> histo = zeros<uint32>(1, binEdges.size() - 1);
+        for (const auto value : inArray)
         {
+            if (value < binEdges.front() || value > binEdges.back())
+            {
+                continue;
+            }
+
             // binary search to find the bin idx
-            const bool keepSearching = true;
+            constexpr bool keepSearching = true;
             uint32 lowIdx = 0;
             uint32 highIdx = binEdges.size() - 1;
             while (keepSearching)
@@ -82,11 +89,11 @@ namespace nc
                     break;
                 }
 
-                if (inArray[i] > binEdges[idx])
+                if (value > binEdges[idx])
                 {
                     lowIdx = idx;
                 }
-                else if (inArray[i] < binEdges[idx])
+                else if (value < binEdges[idx])
                 {
                     highIdx = idx;
                 }
@@ -99,6 +106,37 @@ namespace nc
             }
         }
 
+        return histo;
+    }
+
+    //============================================================================
+    // Method Description:
+    ///						Compute the histogram of a set of data.
+    ///
+    ///                     NumPy Reference: https://www.numpy.org/devdocs/reference/generated/numpy.histogram.html
+    ///
+    ///
+    /// @param				inArray
+    /// @param				inNumBins( default 10)
+    ///
+    /// @return
+    ///				std::pair of NdArrays; first is histogram counts, seconds is the bin edges
+    ///
+    template<typename dtype>
+    std::pair<NdArray<uint32>, NdArray<double> > histogram(const NdArray<dtype>& inArray, uint32 inNumBins = 10)
+    {
+        STATIC_ASSERT_ARITHMETIC(dtype);
+
+        if (inNumBins == 0)
+        {
+            THROW_INVALID_ARGUMENT_ERROR("number of bins must be positive.");
+        }
+
+        constexpr bool useEndPoint = true;
+        const NdArray<double> binEdges = linspace(static_cast<double>(inArray.min().item()),
+            static_cast<double>(inArray.max().item()), inNumBins + 1, useEndPoint);
+
+        const auto histo = histogram(inArray, binEdges);
         return std::make_pair(histo, binEdges);
     }
-}
+}  // namespace nc

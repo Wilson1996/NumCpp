@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,7 +22,7 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Usefull types
 ///
 #pragma once
@@ -33,14 +32,14 @@
 namespace nc
 {
     //====================================Typedefs====================================
-    typedef int64_t		int64;
-    typedef int32_t		int32;
-    typedef int16_t		int16;
-    typedef int8_t		int8;
-    typedef uint64_t	uint64;
-    typedef uint32_t	uint32;
-    typedef uint16_t	uint16;
-    typedef uint8_t		uint8;
+    using int64 = std::int64_t;
+    using int32 = std::int32_t;
+    using int16 = std::int16_t;
+    using int8 = std::int8_t;
+    using uint64 = std::uint64_t;
+    using uint32 = std::uint32_t;
+    using uint16 = std::uint16_t;
+    using uint8 = std::uint8_t;
 
     //================================================================================
     ///						Enum To describe an axis
@@ -49,4 +48,4 @@ namespace nc
     //================================================================================
     ///						Enum for endianess
     enum class Endian { NATIVE = 0, BIG, LITTLE };
-}
+} // namespace nc

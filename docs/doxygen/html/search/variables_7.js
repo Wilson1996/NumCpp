@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['nan',['nan',['../namespacenc_1_1constants.html#af94758715a9a5157d7ca95ab89d390ac',1,'nc::constants']]]
+  ['j_2239',['j',['../namespacenc_1_1constants.html#a0e933571f05ee6af915fc327260517e9',1,'nc::constants']]]
 ];

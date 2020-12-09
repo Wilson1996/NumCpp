@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,12 +22,15 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Raises the input value to an integer power
 ///
 #pragma once
 
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
 #include "NumCpp/Core/Types.hpp"
+
+#include<complex>
 
 namespace nc
 {
@@ -43,8 +45,10 @@ namespace nc
         /// @return     inValue raised to inPower
         ///
         template<typename dtype>
-        dtype power(dtype inValue, uint8 inPower) noexcept
+        dtype power(dtype inValue, uint8 inPower) noexcept 
         {
+            STATIC_ASSERT_ARITHMETIC_OR_COMPLEX(dtype);
+
             if (inPower == 0)
             {
                 return static_cast<dtype>(1);
@@ -57,5 +61,5 @@ namespace nc
             }
             return returnVal;
         }
-    }
-}
+    }  // namespace utils
+}  // namespace nc

@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,7 +22,7 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// A timer class for timing code execution
 ///
 #pragma once
@@ -44,8 +43,82 @@ namespace nc
     {
     public:
         //==============================Typedefs======================================
-        typedef std::chrono::high_resolution_clock		ChronoClock;
-        typedef std::chrono::time_point<ChronoClock>	TimePoint;
+        using ChronoClock = std::chrono::high_resolution_clock;
+        using TimePoint = std::chrono::time_point<ChronoClock>;
+
+        //============================================================================
+        // Method Description:
+        ///						Constructor
+        ///
+        Timer() :
+            start_(ChronoClock::now())
+        {
+            setUnits();
+        }
+
+        //============================================================================
+        // Method Description:
+        ///						Constructor
+        ///
+        /// @param      inName
+        ///
+        explicit Timer(const std::string& inName)  :
+            name_(inName + " "),
+            start_(ChronoClock::now())
+        {
+            setUnits();
+        }
+
+        //============================================================================
+        // Method Description:
+        ///						Sets/changes the timer name
+        ///
+        /// @param      inName
+        ///
+        void setName(const std::string& inName) 
+        {
+            name_ = inName + " ";
+        }
+
+        //============================================================================
+        // Method Description:
+        ///						Sleeps the current thread
+        ///
+        /// @param length: the length of time to sleep
+        ///
+        void sleep(uint32 length)
+        {
+            std::this_thread::sleep_for(TimeUnit(length));
+        }
+
+        //============================================================================
+        // Method Description:
+        ///						Starts the timer
+        ///
+        void tic() noexcept 
+        {
+            start_ = ChronoClock::now();
+        }
+
+        //============================================================================
+        // Method Description:
+        ///						Stops the timer
+        ///
+        /// @param      printElapsedTime: bool whether or not to print the elapsed time to 
+        ///             the console
+        /// @return     ellapsed time in specified time units
+        ///
+        uint64 toc(bool printElapsedTime = true) 
+        {
+            const auto duration = static_cast<uint64>(std::chrono::duration_cast<TimeUnit>(ChronoClock::now() - start_).count());
+
+            if (printElapsedTime)
+            {
+                std::cout << name_ << "Elapsed Time = " << duration << unit_ << std::endl;
+            }
+
+            return duration;
+        }
 
     private:
         //==============================Attributes====================================
@@ -53,7 +126,7 @@ namespace nc
         std::string		unit_{ "" };
         TimePoint		start_{};
 
-        void setUnits()
+        void setUnits() 
         {
             if (std::is_same<TimeUnit, std::chrono::hours>::value)
             {
@@ -84,80 +157,5 @@ namespace nc
                 unit_ = " time units of some sort";
             }
         }
-
-    public:
-        //============================================================================
-        // Method Description:
-        ///						Constructor
-        ///
-        Timer() noexcept :
-            start_(ChronoClock::now())
-        {
-            setUnits();
-        }
-
-        //============================================================================
-        // Method Description:
-        ///						Constructor
-        ///
-        /// @param      inName
-        ///
-        Timer(const std::string& inName) noexcept :
-            name_(inName + " "),
-            start_(ChronoClock::now())
-        {
-            setUnits();
-        }
-
-        //============================================================================
-        // Method Description:
-        ///						Sets/changes the timer name
-        ///
-        /// @param      inName
-        ///
-        void setName(const std::string& inName) noexcept
-        {
-            name_ = inName + " ";
-        }
-
-        //============================================================================
-        // Method Description:
-        ///						Sleeps the current thread
-        ///
-        /// @param length: the length of time to sleep
-        ///
-        void sleep(uint32 length)
-        {
-            std::this_thread::sleep_for(TimeUnit(length));
-        }
-
-        //============================================================================
-        // Method Description:
-        ///						Starts the timer
-        ///
-        void tic() noexcept
-        {
-            start_ = ChronoClock::now();
-        }
-
-        //============================================================================
-        // Method Description:
-        ///						Stops the timer
-        ///
-        /// @param      printElapsedTime: bool whether or not to print the elapsed time to 
-        ///             the console
-        /// @return     ellapsed time in specified time units
-        ///
-        uint64 toc(bool printElapsedTime = true) noexcept
-        {
-            const auto duration = static_cast<uint64>(std::chrono::duration_cast<TimeUnit>(ChronoClock::now() - start_).count());
-
-            if (printElapsedTime)
-            {
-                std::cout << name_ << "Elapsed Time = " << duration << unit_ << std::endl;
-            }
-
-            return duration;
-        }
     };
-}
+}  // namespace nc

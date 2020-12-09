@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,13 +22,14 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Special Functions
 ///
 #pragma once
 
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
+#include "NumCpp/Core/Internal/StlAlgorithms.hpp"
 #include "NumCpp/NdArray.hpp"
-#include "NumCpp/Core/StlAlgorithms.hpp"
 
 #include "boost/math/special_functions/legendre.hpp"
 
@@ -47,8 +47,10 @@ namespace nc
         ///				double
         ///
         template<typename dtype>
-        double legendre_q(int32 n, dtype x) noexcept
+        double legendre_q(int32 n, dtype x)
         {
+            STATIC_ASSERT_ARITHMETIC(dtype);
+
             if (x < -1.0 || x > 1.0 )
             {
                 THROW_INVALID_ARGUMENT_ERROR("input x must be of the range [-1, 1].");
@@ -67,11 +69,11 @@ namespace nc
         ///				NdArray<double>
         ///
         template<typename dtype>
-        NdArray<double> legendre_q(int32 n, const NdArray<dtype>& inArrayX) noexcept
+        NdArray<double> legendre_q(int32 n, const NdArray<dtype>& inArrayX)
         {
             NdArray<double> returnArray(inArrayX.shape());
 
-            auto function = [n](dtype x) -> double
+            const auto function = [n](dtype x) -> double
             {
                 return legendre_q(n, x);
             };
@@ -80,5 +82,5 @@ namespace nc
 
             return returnArray;
         }
-    }
-}
+    } // namespace polynomial
+}  // namespace nc

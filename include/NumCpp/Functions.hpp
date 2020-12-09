@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,7 +22,7 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Methods for interacting with NdArrays
 ///
 #pragma once
@@ -35,6 +34,7 @@
 #include "NumCpp/Functions/allclose.hpp"
 #include "NumCpp/Functions/amax.hpp"
 #include "NumCpp/Functions/amin.hpp"
+#include "NumCpp/Functions/angle.hpp"
 #include "NumCpp/Functions/any.hpp"
 #include "NumCpp/Functions/append.hpp"
 #include "NumCpp/Functions/applyFunction.hpp"
@@ -71,11 +71,13 @@
 #include "NumCpp/Functions/centerOfMass.hpp"
 #include "NumCpp/Functions/clip.hpp"
 #include "NumCpp/Functions/column_stack.hpp"
+#include "NumCpp/Functions/complex.hpp"
 #include "NumCpp/Functions/concatenate.hpp"
+#include "NumCpp/Functions/conj.hpp"
 #include "NumCpp/Functions/contains.hpp"
 #include "NumCpp/Functions/copy.hpp"
-#include "NumCpp/Functions/copyto.hpp"
 #include "NumCpp/Functions/copySign.hpp"
+#include "NumCpp/Functions/copyto.hpp"
 #include "NumCpp/Functions/cos.hpp"
 #include "NumCpp/Functions/cosh.hpp"
 #include "NumCpp/Functions/count_nonzero.hpp"
@@ -87,8 +89,9 @@
 #include "NumCpp/Functions/deg2rad.hpp"
 #include "NumCpp/Functions/degrees.hpp"
 #include "NumCpp/Functions/deleteIndices.hpp"
-#include "NumCpp/Functions/diagFlat.hpp"
-#include "NumCpp/Functions/diagnol.hpp"
+#include "NumCpp/Functions/diag.hpp"
+#include "NumCpp/Functions/diagflat.hpp"
+#include "NumCpp/Functions/diagonal.hpp"
 #include "NumCpp/Functions/diff.hpp"
 #include "NumCpp/Functions/divide.hpp"
 #include "NumCpp/Functions/dot.hpp"
@@ -116,8 +119,8 @@
 #include "NumCpp/Functions/fmax.hpp"
 #include "NumCpp/Functions/fmin.hpp"
 #include "NumCpp/Functions/fmod.hpp"
-#include "NumCpp/Functions/fromBuffer.hpp"
-#include "NumCpp/Functions/fromFile.hpp"
+#include "NumCpp/Functions/frombuffer.hpp"
+#include "NumCpp/Functions/fromfile.hpp"
 #include "NumCpp/Functions/fromiter.hpp"
 #include "NumCpp/Functions/full.hpp"
 #include "NumCpp/Functions/full_like.hpp"
@@ -132,6 +135,7 @@
 #include "NumCpp/Functions/hypot.hpp"
 
 #include "NumCpp/Functions/identity.hpp"
+#include "NumCpp/Functions/imag.hpp"
 #include "NumCpp/Functions/interp.hpp"
 #include "NumCpp/Functions/intersect1d.hpp"
 #include "NumCpp/Functions/invert.hpp"
@@ -147,9 +151,9 @@
 #include "NumCpp/Functions/linspace.hpp"
 #include "NumCpp/Functions/load.hpp"
 #include "NumCpp/Functions/log.hpp"
+#include "NumCpp/Functions/log10.hpp"
 #include "NumCpp/Functions/log1p.hpp"
 #include "NumCpp/Functions/log2.hpp"
-#include "NumCpp/Functions/log10.hpp"
 #include "NumCpp/Functions/logical_and.hpp"
 #include "NumCpp/Functions/logical_not.hpp"
 #include "NumCpp/Functions/logical_or.hpp"
@@ -165,8 +169,6 @@
 #include "NumCpp/Functions/minimum.hpp"
 #include "NumCpp/Functions/mod.hpp"
 #include "NumCpp/Functions/multiply.hpp"
-#include "NumCpp/Functions/matmul.hpp"
-#include "NumCpp/Functions/matmul.hpp"
 
 #include "NumCpp/Functions/nanargmax.hpp"
 #include "NumCpp/Functions/nanargmin.hpp"
@@ -193,14 +195,17 @@
 
 #include "NumCpp/Functions/ones.hpp"
 #include "NumCpp/Functions/ones_like.hpp"
+#include "NumCpp/Functions/outer.hpp"
 
 #include "NumCpp/Functions/pad.hpp"
 #include "NumCpp/Functions/partition.hpp"
 #include "NumCpp/Functions/percentile.hpp"
+#include "NumCpp/Functions/polar.hpp"
 #include "NumCpp/Functions/power.hpp"
 #include "NumCpp/Functions/powerf.hpp"
 #include "NumCpp/Functions/print.hpp"
 #include "NumCpp/Functions/prod.hpp"
+#include "NumCpp/Functions/proj.hpp"
 #include "NumCpp/Functions/ptp.hpp"
 #include "NumCpp/Functions/put.hpp"
 #include "NumCpp/Functions/putmask.hpp"
@@ -208,6 +213,7 @@
 #include "NumCpp/Functions/rad2deg.hpp"
 #include "NumCpp/Functions/radians.hpp"
 #include "NumCpp/Functions/ravel.hpp"
+#include "NumCpp/Functions/real.hpp"
 #include "NumCpp/Functions/reciprocal.hpp"
 #include "NumCpp/Functions/remainder.hpp"
 #include "NumCpp/Functions/repeat.hpp"
@@ -238,13 +244,14 @@
 #include "NumCpp/Functions/stdev.hpp"
 #include "NumCpp/Functions/subtract.hpp"
 #include "NumCpp/Functions/sum.hpp"
+#include "NumCpp/Functions/swap.hpp"
 #include "NumCpp/Functions/swapaxes.hpp"
 
 #include "NumCpp/Functions/tan.hpp"
 #include "NumCpp/Functions/tanh.hpp"
 #include "NumCpp/Functions/tile.hpp"
-#include "NumCpp/Functions/tofile.hpp"
 #include "NumCpp/Functions/toStlVector.hpp"
+#include "NumCpp/Functions/tofile.hpp"
 #include "NumCpp/Functions/trace.hpp"
 #include "NumCpp/Functions/transpose.hpp"
 #include "NumCpp/Functions/trapz.hpp"

@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,12 +22,13 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Compute the dot product of two or more arrays in a single function call.
 ///
 #pragma once
 
-#include "NumCpp/Core/Error.hpp"
+#include "NumCpp/Core/Internal/Error.hpp"
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
 #include "NumCpp/Functions/dot.hpp"
 #include "NumCpp/NdArray.hpp"
 
@@ -55,6 +55,8 @@ namespace nc
         template<typename dtype>
         NdArray<dtype> multi_dot(const std::initializer_list<NdArray<dtype> >& inList)
         {
+            STATIC_ASSERT_ARITHMETIC_OR_COMPLEX(dtype);
+
             typename std::initializer_list<NdArray<dtype> >::iterator iter = inList.begin();
 
             if (inList.size() == 0)
@@ -75,5 +77,5 @@ namespace nc
 
             return returnArray;
         }
-    }
-}
+    } // namespace linalg
+} // namespace nc

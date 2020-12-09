@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,7 +22,7 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// A Shape Class for NdArrays
 ///
 #pragma once
@@ -48,7 +47,7 @@ namespace nc
         //============================================================================
         ///						Constructor
         ///
-        constexpr Shape() noexcept = default;
+        constexpr Shape() = default;
 
         //============================================================================
         ///						Constructor
@@ -58,7 +57,7 @@ namespace nc
         constexpr explicit Shape(uint32 inSquareSize) noexcept :
             rows(inSquareSize),
             cols(inSquareSize)
-        {};
+        {}
 
         //============================================================================
         ///						Constructor
@@ -69,7 +68,7 @@ namespace nc
         constexpr Shape(uint32 inRows, uint32 inCols) noexcept :
             rows(inRows),
             cols(inCols)
-        {};
+        {}
 
         //============================================================================
         ///						Equality operator
@@ -117,11 +116,21 @@ namespace nc
         }
 
         //============================================================================
+        ///						Returns whether the shape is square or not.
+        ///
+        /// @return     bool
+        ///
+        constexpr bool issquare() const noexcept
+        {
+            return rows == cols;
+        }
+
+        //============================================================================
         ///						Returns the shape as a string representation
         ///
         /// @return     std::string
         ///
-        std::string str() const noexcept
+        std::string str() const 
         {
             std::string out = "[" + utils::num2str(rows) + ", " + utils::num2str(cols) + "]\n";
             return out;
@@ -130,7 +139,7 @@ namespace nc
         //============================================================================
         ///						Prints the shape to the console
         ///
-        void print() const noexcept
+        void print() const 
         {
             std::cout << *this;
         }
@@ -143,10 +152,10 @@ namespace nc
         ///
         /// @return     std::ostream
         ///
-        friend std::ostream& operator<<(std::ostream& inOStream, const Shape& inShape) noexcept
+        friend std::ostream& operator<<(std::ostream& inOStream, const Shape& inShape) 
         {
             inOStream << inShape.str();
             return inOStream;
         }
     };
-}
+} // namespace nc

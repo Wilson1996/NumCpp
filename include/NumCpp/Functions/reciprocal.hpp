@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,14 +22,18 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Functions for working with NdArrays
 ///
 #pragma once
 
-#include "NumCpp/Core/StlAlgorithms.hpp"
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
+#include "NumCpp/Core/Internal/StdComplexOperators.hpp"
+#include "NumCpp/Core/Internal/StlAlgorithms.hpp"
 #include "NumCpp/Core/Types.hpp"
 #include "NumCpp/NdArray.hpp"
+
+#include <complex>
 
 namespace nc
 {
@@ -49,8 +52,10 @@ namespace nc
     ///				NdArray
     ///
     template<typename dtype>
-    NdArray<double> reciprocal(const NdArray<dtype>& inArray) noexcept
+    NdArray<double> reciprocal(const NdArray<dtype>& inArray) 
     {
+        STATIC_ASSERT_ARITHMETIC(dtype);
+
         NdArray<double> returnArray(inArray.shape());
 
         uint32 counter = 0;
@@ -62,4 +67,35 @@ namespace nc
 
         return returnArray;
     }
-}
+
+    //============================================================================
+    // Method Description:
+    ///						Return the reciprocal of the argument, element-wise.
+    ///
+    ///						Calculates 1 / x.
+    ///
+    ///                     NumPy Reference: https://www.numpy.org/devdocs/reference/generated/numpy.reciprocal.html
+    ///
+    /// @param
+    ///				inArray
+    ///
+    /// @return
+    ///				NdArray
+    ///
+    template<typename dtype>
+    NdArray<std::complex<double>> reciprocal(const NdArray<std::complex<dtype>>& inArray) 
+    {
+        STATIC_ASSERT_ARITHMETIC(dtype);
+
+        NdArray<std::complex<double>> returnArray(inArray.shape());
+
+        uint32 counter = 0;
+        std::for_each(inArray.cbegin(), inArray.cend(),
+            [&returnArray, &counter](std::complex<dtype> value)  -> void
+            { 
+                returnArray[counter++] = std::complex<double>(1.0) / complex_cast<double>(value);
+            });
+
+        return returnArray;
+    }
+} // namespace nc

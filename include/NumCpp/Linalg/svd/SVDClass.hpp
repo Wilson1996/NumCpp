@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,13 +22,13 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Performs the singular value decomposition of a general matrix,
 /// taken and adapted from Numerical Recipes Third Edition svd.h
 ///
 #pragma once
 
-#include "NumCpp/Core/Error.hpp"
+#include "NumCpp/Core/Internal/Error.hpp"
 #include "NumCpp/Core/Types.hpp"
 #include "NumCpp/NdArray.hpp"
 
@@ -47,16 +46,6 @@ namespace nc
         ///              taken and adapted from Numerical Recipes Third Edition svd.h
         class SVD
         {
-        private:
-            // ===============================Attributes====================================
-            const uint32		m_;
-            const uint32		n_;
-            NdArray<double>     u_;
-            NdArray<double>     v_;
-            NdArray<double>     s_;
-            double				eps_;
-            double				tsh_;
-
         public:
             // =============================================================================
             // Description:
@@ -65,7 +54,7 @@ namespace nc
             /// @param
             ///              inMatrix: matrix to perform SVD on
             ///
-            SVD(const NdArray<double>& inMatrix) :
+            explicit SVD(const NdArray<double>& inMatrix) :
                 m_(inMatrix.shape().rows),
                 n_(inMatrix.shape().cols),
                 u_(inMatrix),
@@ -85,7 +74,7 @@ namespace nc
             /// @return
             ///              u matrix
             ///
-            const NdArray<double>& u() noexcept
+            const NdArray<double>& u() noexcept 
             {
                 return u_;
             }
@@ -97,7 +86,7 @@ namespace nc
             /// @return
             ///              v matrix
             ///
-            const NdArray<double>& v() noexcept
+            const NdArray<double>& v() noexcept 
             {
                 return v_;
             }
@@ -109,7 +98,7 @@ namespace nc
             /// @return
             ///              s matrix
             ///
-            const NdArray<double>& s() noexcept
+            const NdArray<double>& s() noexcept 
             {
                 return s_;
             }
@@ -178,7 +167,7 @@ namespace nc
             /// @return
             ///              value
             ///
-            double SIGN(double inA, double inB) noexcept
+            static double SIGN(double inA, double inB) noexcept 
             {
                 return inB >= 0 ? (inA >= 0 ? inA : -inA) : (inA >= 0 ? -inA : inA);
             }
@@ -499,7 +488,7 @@ namespace nc
                             z = pythag(f, h);
                             s_[j] = z;
 
-                            if (z)
+                            if (z != 0.0)
                             {
                                 z = 1.0 / z;
                                 c = f * z;
@@ -528,7 +517,7 @@ namespace nc
             // Description:
             ///              reorders the input matrix
             ///
-            void reorder()
+            void reorder() 
             {
                 uint32  i = 0;
                 uint32  j = 0;
@@ -645,13 +634,23 @@ namespace nc
             /// @return
             ///              resultant value
             ///
-            double pythag(double inA, double inB) noexcept
+            static double pythag(double inA, double inB) noexcept
             {
                 const double absa = std::abs(inA);
                 const double absb = std::abs(inB);
                 return (absa > absb ? absa * std::sqrt(1.0 + utils::sqr(absb / absa)) :
                     (absb == 0.0 ? 0.0 : absb * std::sqrt(1.0 + utils::sqr(absa / absb))));
             }
+
+        private:
+            // ===============================Attributes====================================
+            const uint32		m_;
+            const uint32		n_;
+            NdArray<double>     u_;
+            NdArray<double>     v_;
+            NdArray<double>     s_;
+            double				eps_;
+            double				tsh_;
         };
-    }
-}
+    } // namespace linalg
+} // namespace nc

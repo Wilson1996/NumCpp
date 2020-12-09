@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,11 +22,12 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Special Functions
 ///
 #pragma once
 
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
 #include "NumCpp/NdArray.hpp"
 
 #include "boost/math/special_functions/spherical_harmonic.hpp"
@@ -53,8 +53,11 @@ namespace nc
         ///				double
         ///
         template<typename dtype1, typename dtype2>
-        std::complex<double> spherical_harmonic(uint32 n, int32 m,  dtype1 theta, dtype2 phi) noexcept
+        std::complex<double> spherical_harmonic(uint32 n, int32 m,  dtype1 theta, dtype2 phi)
         {
+            STATIC_ASSERT_ARITHMETIC(dtype1);
+            STATIC_ASSERT_ARITHMETIC(dtype2);
+
             return boost::math::spherical_harmonic(m, n, static_cast<double>(phi), static_cast<double>(theta));
         }
 
@@ -73,8 +76,11 @@ namespace nc
         ///				double
         ///
         template<typename dtype1, typename dtype2>
-        double spherical_harmonic_r(uint32 n, int32 m,  dtype1 theta, dtype2 phi) noexcept
+        double spherical_harmonic_r(uint32 n, int32 m,  dtype1 theta, dtype2 phi)
         {
+            STATIC_ASSERT_ARITHMETIC(dtype1);
+            STATIC_ASSERT_ARITHMETIC(dtype2);
+
             return boost::math::spherical_harmonic_r(m, n, static_cast<double>(phi), static_cast<double>(theta));
         }
 
@@ -93,9 +99,12 @@ namespace nc
         ///				double
         ///
         template<typename dtype1, typename dtype2>
-        double spherical_harmonic_i(uint32 n, int32 m,  dtype1 theta, dtype2 phi) noexcept
+        double spherical_harmonic_i(uint32 n, int32 m,  dtype1 theta, dtype2 phi)
         {
+            STATIC_ASSERT_ARITHMETIC(dtype1);
+            STATIC_ASSERT_ARITHMETIC(dtype2);
+
             return boost::math::spherical_harmonic_i(m, n, static_cast<double>(phi), static_cast<double>(theta));
         }
-    }
-}
+    } // namespace polynomial
+} // namespace nc

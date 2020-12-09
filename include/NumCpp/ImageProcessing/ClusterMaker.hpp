@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,13 +22,14 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Clusters exceedance data into contiguous groups
 ///
 
 #pragma once
 
-#include "NumCpp/Core/Error.hpp"
+#include "NumCpp/Core/Internal/Error.hpp"
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
 #include "NumCpp/Core/Types.hpp"
 #include "NumCpp/ImageProcessing/Cluster.hpp"
 #include "NumCpp/NdArray.hpp"
@@ -51,9 +51,12 @@ namespace nc
         template<typename dtype>
         class ClusterMaker
         {
+        private:
+            STATIC_ASSERT_ARITHMETIC(dtype);
+
         public:
             //================================Typedefs=====================================
-            typedef typename std::vector<Cluster<dtype> >::const_iterator   const_iterator;
+            using const_iterator = typename std::vector<Cluster<dtype> >::const_iterator;
 
             //=============================================================================
             // Description:
@@ -105,7 +108,7 @@ namespace nc
             /// @return
             ///              number of clusters
             ///
-            uint32 size()
+            uint32 size() noexcept
             {
                 return static_cast<uint32>(clusters_.size());
             }
@@ -120,7 +123,7 @@ namespace nc
             /// @return
             ///              Cluster
             ///
-            const Cluster<dtype>& operator[](uint32 inIndex) const
+            const Cluster<dtype>& operator[](uint32 inIndex) const noexcept
             {
                 return clusters_[inIndex];
             }
@@ -151,7 +154,7 @@ namespace nc
             /// @return
             ///              const_iterator
             ///
-            const_iterator begin() const noexcept
+            const_iterator begin() const noexcept 
             {
                 return clusters_.cbegin();
             }
@@ -163,7 +166,7 @@ namespace nc
             /// @return
             ///              const_iterator
             ///
-            const_iterator end() const noexcept
+            const_iterator end() const noexcept 
             {
                 return clusters_.cend();
             }
@@ -213,8 +216,8 @@ namespace nc
                 // using a set will auto take care of adding duplicate pixels on the edges
 
                 // the 8 surrounding neighbors
-                const int32 row = static_cast<int32>(inPixel.row);
-                const int32 col = static_cast<int32>(inPixel.col);
+                const auto row = static_cast<int32>(inPixel.row);
+                const auto col = static_cast<int32>(inPixel.col);
 
                 outNeighbors.insert(outNeighbors.end(), makePixel(row - 1, col - 1));
                 outNeighbors.insert(outNeighbors.end(), makePixel(row - 1, col));
@@ -371,5 +374,5 @@ namespace nc
                 }
             }
         };
-    }
-}
+    }  // namespace imageProcessing
+}  // namespace nc

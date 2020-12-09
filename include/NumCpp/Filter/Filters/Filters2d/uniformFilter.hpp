@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,7 +22,7 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Calculates a multidimensional uniform filter.
 ///
 #pragma once
@@ -32,6 +31,7 @@
 #include "NumCpp/Core/Slice.hpp"
 #include "NumCpp/Core/Types.hpp"
 #include "NumCpp/Filter/Boundaries/Boundaries2d/addBoundary2d.hpp"
+#include "NumCpp/Functions/mean.hpp"
 #include "NumCpp/NdArray.hpp"
 
 namespace nc
@@ -70,11 +70,11 @@ namespace nc
                     NdArray<dtype> window = arrayWithBoundary(Slice(row - boundarySize, row + boundarySize + 1),
                         Slice(col - boundarySize, col + boundarySize + 1));
 
-                    output(row - boundarySize, col - boundarySize) = window.mean().item();
+                    output(row - boundarySize, col - boundarySize) = mean(window).item();
                 }
             }
 
             return output;
         }
-    }
-}
+    } // namespace filter
+} // namespace nc

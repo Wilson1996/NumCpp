@@ -1,13 +1,12 @@
 /// @section Description
-/// A C++ Implementation of the Python Numpy Library
+/// A Templatized Header Only C++ Implementation of the Python Numpy Library
 ///
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
 ///
-/// @version 1.2
 ///
 /// @section License
-/// Copyright 2019 David Pilger
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -27,7 +26,18 @@
 /// DEALINGS IN THE SOFTWARE.
 ///
 /// @section Testing
-/// Compiled and tested with Visual Studio 2017/2019, and g++ 7.3.0/8.0, clang 6.0, with Boost version 1.68 and 1.70.
+/// **C++ Standards:**  
+/// C++14  
+/// C++17  
+/// C++2a  
+///
+/// **Compilers:**  
+/// Visual Studio: 2017, 2019  
+/// GNU: 6.5, 7.5, 8.4, 9.3, 10.1  
+/// Clang: 6, 7, 8, 9, 10  
+/// 
+/// **Boost Versions:**  
+/// 1.68, 1.70, 1.72, and 1.73  
 ///
 #pragma once
 
@@ -36,22 +46,28 @@
 #include "NumCpp/Filter.hpp"
 #include "NumCpp/Functions.hpp"
 #include "NumCpp/ImageProcessing.hpp"
+#include "NumCpp/Integrate.hpp"
 #include "NumCpp/Linalg.hpp"
 #include "NumCpp/NdArray.hpp"
 #include "NumCpp/Polynomial.hpp"
 #include "NumCpp/PythonInterface.hpp"
 #include "NumCpp/Random.hpp"
+#include "NumCpp/Roots.hpp"
 #include "NumCpp/Rotations.hpp"
 #include "NumCpp/Special.hpp"
 #include "NumCpp/Utils.hpp"
 #include "NumCpp/Vector.hpp"
 
-/// \example ReadMe.cpp
-/// Examples from the Quick Start Guide in README.md at [GitHub Repository](https://github.com/dpilger26/NumCpp)
+/// \example GaussNewtonNlls.cpp
+/// Example for using the linalg::gaussNewtonNlls function
 ///
 /// \example InterfaceWithEigen.cpp
 /// Example for interfaceing with Eigen Matrix
-
 ///
 /// \example InterfaceWithOpenCV.cpp
 /// Example for interfaceing with OpenCV Mat
+///
+/// \example ReadMe.cpp
+/// Examples from the Quick Start Guide in README.md at [GitHub Repository](https://github.com/dpilger26/NumCpp)
+///
+

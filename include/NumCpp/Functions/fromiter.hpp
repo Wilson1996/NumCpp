@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,13 +22,14 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Functions for working with NdArrays
 ///
 #pragma once
 
 #include "NumCpp/NdArray.hpp"
 
+#include <iterator>
 #include <vector>
 
 namespace nc
@@ -46,13 +46,8 @@ namespace nc
     ///				NdArray
     ///
     template<typename dtype, typename Iter>
-    NdArray<dtype> fromiter(Iter inBegin, Iter inEnd) noexcept
+    NdArray<dtype> fromiter(Iter inBegin, Iter inEnd) 
     {
-        std::vector<dtype> values;
-        for (Iter iter = inBegin; iter != inEnd; ++iter)
-        {
-            values.push_back(*iter);
-        }
-        return NdArray<dtype>(values);
+        return NdArray<dtype>(inBegin, inEnd);
     }
-}
+} // namespace nc

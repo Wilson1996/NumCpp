@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,13 +22,14 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// "standard normal" distribution.
 ///
 #pragma once
 
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
+#include "NumCpp/Core/Internal/StlAlgorithms.hpp"
 #include "NumCpp/Core/Shape.hpp"
-#include "NumCpp/Core/StlAlgorithms.hpp"
 #include "NumCpp/NdArray.hpp"
 #include "NumCpp/Random/generator.hpp"
 
@@ -39,6 +39,23 @@ namespace nc
 {
     namespace random
     {
+        //============================================================================
+        // Method Description:
+        ///						Returns a single random value sampled from the "standard normal" distribution.
+        ///
+        ///                     NumPy Reference: https://docs.scipy.org/doc/numpy/reference/generated/numpy.random.randn.html#numpy.random.randn
+        ///
+        /// @return dtype
+        ///
+        template<typename dtype>
+        dtype randN() 
+        {
+            STATIC_ASSERT_FLOAT(dtype);
+
+            boost::random::normal_distribution<dtype> dist;
+            return dist(generator_);
+        }
+
         //============================================================================
         // Method Description:
         ///						Create an array of the given shape and populate it with
@@ -52,19 +69,21 @@ namespace nc
         ///				NdArray
         ///
         template<typename dtype>
-        NdArray<dtype> randN(const Shape& inShape) noexcept
+        NdArray<dtype> randN(const Shape& inShape) 
         {
+            STATIC_ASSERT_FLOAT(dtype);
+
             NdArray<dtype> returnArray(inShape);
 
             boost::random::normal_distribution<dtype> dist;
 
             stl_algorithms::for_each(returnArray.begin(), returnArray.end(),
-                [&dist](dtype& value) noexcept -> void
+                [&dist](dtype& value)  -> void
                 { 
                     value = dist(generator_);
                 });
 
             return returnArray;
         }
-    }
-}
+    } // namespace random
+} // namespace nc

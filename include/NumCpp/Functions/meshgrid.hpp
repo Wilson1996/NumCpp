@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,11 +22,12 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Functions for working with NdArrays
 ///
 #pragma once
 
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
 #include "NumCpp/Functions/arange.hpp"
 #include "NumCpp/NdArray.hpp"
 
@@ -38,7 +38,7 @@ namespace nc
     //============================================================================
     // Method Description:
     ///						Return coordinate matrices from coordinate vectors.
-    ///                     Make 2D coordinate arrays for vectorized evaluations of 2D scalar
+    ///                     Make 2D coordinate arrays for vectorized evaluations of 2D scaler
     ///                     vector fields over 2D grids, given one - dimensional coordinate arrays x1, x2, ..., xn.
     ///                     If input arrays are not one dimensional they will be flattened.
     ///
@@ -51,8 +51,10 @@ namespace nc
     ///				std::pair<NdArray<dtype>, NdArray<dtype> >, i and j matrices
     ///
     template<typename dtype>
-    std::pair<NdArray<dtype>, NdArray<dtype> > meshgrid(const NdArray<dtype>& inICoords, const NdArray<dtype>& inJCoords) noexcept
+    std::pair<NdArray<dtype>, NdArray<dtype> > meshgrid(const NdArray<dtype>& inICoords, const NdArray<dtype>& inJCoords) 
     {
+        STATIC_ASSERT_ARITHMETIC(dtype);
+
         const uint32 numRows = inJCoords.size();
         const uint32 numCols = inICoords.size();
         auto returnArrayI = NdArray<dtype>(numRows, numCols);
@@ -82,7 +84,7 @@ namespace nc
     //============================================================================
 // Method Description:
 ///						Return coordinate matrices from coordinate vectors.
-///                     Make 2D coordinate arrays for vectorized evaluations of 2D scalar
+///                     Make 2D coordinate arrays for vectorized evaluations of 2D scaler
 ///                     vector fields over 2D grids, given one - dimensional coordinate arrays x1, x2, ..., xn.
 ///
 ///                     NumPy Reference: https://www.numpy.org/devdocs/reference/generated/numpy.meshgrid.html
@@ -94,9 +96,9 @@ namespace nc
 ///				std::pair<NdArray<dtype>, NdArray<dtype> >, i and j matrices
 ///
     template<typename dtype>
-    std::pair<NdArray<dtype>, NdArray<dtype> > meshgrid(const Slice& inSlice1, const Slice& inSlice2) noexcept
+    std::pair<NdArray<dtype>, NdArray<dtype> > meshgrid(const Slice& inSlice1, const Slice& inSlice2)
     {
         return meshgrid(arange<dtype>(inSlice1), arange<dtype>(inSlice2));
     }
 
-}
+} // namespace nc

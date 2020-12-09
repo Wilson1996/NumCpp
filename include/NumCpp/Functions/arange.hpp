@@ -1,10 +1,9 @@
 /// @file
 /// @author David Pilger <dpilger26@gmail.com>
 /// [GitHub Repository](https://github.com/dpilger26/NumCpp)
-/// @version 1.2
 ///
-/// @section License
-/// Copyright 2019 David Pilger
+/// License
+/// Copyright 2020 David Pilger
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this
 /// software and associated documentation files(the "Software"), to deal in the Software
@@ -23,12 +22,13 @@
 /// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 /// DEALINGS IN THE SOFTWARE.
 ///
-/// @section Description
+/// Description
 /// Functions for working with NdArrays
 ///
 #pragma once
 
-#include "NumCpp/Core/Error.hpp"
+#include "NumCpp/Core/Internal/Error.hpp"
+#include "NumCpp/Core/Internal/StaticAsserts.hpp"
 #include "NumCpp/NdArray.hpp"
 
 #include <string>
@@ -59,6 +59,8 @@ namespace nc
     template<typename dtype>
     NdArray<dtype> arange(dtype inStart, dtype inStop, dtype inStep = 1)
     {
+        STATIC_ASSERT_ARITHMETIC(dtype);
+
         if (inStep > 0 && inStop < inStart)
         {
             THROW_INVALID_ARGUMENT_ERROR("stop value must be larger than the start value for positive step.");
@@ -72,13 +74,14 @@ namespace nc
         std::vector<dtype> values;
 
         dtype theValue = inStart;
+        auto counter = dtype{ 1 };
 
         if (inStep > 0)
         {
             while (theValue < inStop)
             {
                 values.push_back(theValue);
-                theValue += inStep;
+                theValue = inStart + inStep * counter++;
             }
         }
         else
@@ -86,7 +89,7 @@ namespace nc
             while (theValue > inStop)
             {
                 values.push_back(theValue);
-                theValue += inStep;
+                theValue = inStart + inStep * counter++;
             }
         }
 
@@ -147,4 +150,4 @@ namespace nc
     {
         return arange<dtype>(inSlice.start, inSlice.stop, inSlice.step);
     }
-}
+}  // namespace nc
